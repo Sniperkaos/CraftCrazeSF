@@ -1,2 +1,28 @@
 options:
   auto-update: true
+  
+lang:
+   token-use: "&aYou have successfully used this {token}!"
+   token-deny: "&fYou are unable to use this {token}!"
+  
+tokens:
+   basic:
+      name: "&7Basic Research Token"
+      desc: "&7>> &4&nRight-Click&r &7to redeem this token."
+      unlocks: 
+         - slimefun:automatic_ignition_chamber
+   advanced:
+      name: "&eAdvanced Research Token"
+      desc: "&e>> &4&nRight-Click&r &eto redeem this token."
+      unlocks: 
+         - slimefun:automatic_ignition_chamber
+   elite:
+      name: "&aElite Research Token"
+      desc: "&a>> &4&nRight-Click&r &ato redeem this token."
+      unlocks: 
+         - slimefun:automatic_ignition_chamber
+   legendary:
+      name: "&6&lLegendary Research Token"
+      desc: "&6>> &4&nRight-Click&r &6to redeem this token."
+      unlocks: 
+         - slimefun:automatic_ignition_chamber
