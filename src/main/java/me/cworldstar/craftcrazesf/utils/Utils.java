@@ -59,14 +59,14 @@ public class Utils {
 		
 	}
 
-	public static double clamp(int a, int b, double d) {
+	public static double clamp(int min, int max, double d) {
 		
-		if(d >= a) {
-			d = (double) a;
+		if(d >= max) {
+			d = (double) max;
 		} 
 		
-		if (d <= b) {
-			d = (double) b;
+		if (d <= min) {
+			d = (double) min;
 		}
 	
 		return d;

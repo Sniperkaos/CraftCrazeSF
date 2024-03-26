@@ -23,7 +23,9 @@ public class IronGolemPetListener implements Listener {
 	@EventHandler
 	public void onEntityDamage(EntityDamageByEntityEvent event) {
 		if(event.getEntity() instanceof Player) {
-
+			if(event.getDamager() == null) {
+				return;
+			}
 			
 			// get the slimefun item in the player's inventory
 			Player p = (Player) event.getEntity();

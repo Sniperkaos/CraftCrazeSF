@@ -12,6 +12,7 @@ import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -22,6 +23,8 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.attributes.HologramOwner;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
+import io.github.thebusybiscuit.slimefun4.core.handlers.BlockPlaceHandler;
+import me.cworldstar.craftcrazesf.CraftCrazeSF;
 import me.cworldstar.craftcrazesf.utils.Utils;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu.MenuClickHandler;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
@@ -32,6 +35,7 @@ import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
 public class ExperienceGenerator extends AbstractMachineBlock implements HologramOwner {
 	
 	private double stored_experience = 0;
+	private double to_add = 0.02;
 	
 	public ExperienceGenerator(ItemGroup category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
 		super(category, item, recipeType, recipe);
@@ -40,6 +44,17 @@ public class ExperienceGenerator extends AbstractMachineBlock implements Hologra
 		this.energyCapacity(2000);
 		
 		ExperienceGenerator self = this;
+		
+		addItemHandler(new BlockPlaceHandler(false) {
+
+			@Override
+			public void onPlayerPlace(BlockPlaceEvent e) {
+				try {
+					self.to_add = CraftCrazeSF.config().getDouble("experience-generator.experience-per-tick");
+				} finally {}
+			}
+
+		});
 		
 		addItemHandler(new BlockBreakHandler(false, false) {
 			@Override
@@ -57,8 +72,8 @@ public class ExperienceGenerator extends AbstractMachineBlock implements Hologra
 	@Override
 	public boolean process(Block b, BlockMenu menu) {
 		if(getCharge(b.getLocation()) > 100) {
-			stored_experience = Utils.clamp(0, 5000, stored_experience + 0.01);
-			updateHologram(b, Utils.formatString("&eExperience Stored: ".concat(Double.toString(this.stored_experience / 5000))));
+			stored_experience = Utils.clamp(0, 5000, stored_experience + to_add);
+			updateHologram(b, Utils.formatString("&eExperience Stored: ".concat(Double.toString(this.stored_experience).concat("/5000"))));
 			return true;
 		}
 		return false;

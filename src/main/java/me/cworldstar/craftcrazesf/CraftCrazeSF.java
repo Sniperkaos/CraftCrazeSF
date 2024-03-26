@@ -1,13 +1,10 @@
 package me.cworldstar.craftcrazesf;
 
 import java.io.File;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bukkit.command.CommandExecutor;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPluginLoader;
 
@@ -16,8 +13,8 @@ import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.config.Config;
 import me.cworldstar.craftcrazesf.commands.ListResearch;
 import me.cworldstar.craftcrazesf.commands.Token;
+import me.cworldstar.craftcrazesf.listeners.ChickenPetListener;
 import me.cworldstar.craftcrazesf.listeners.IronGolemPetListener;
-import me.cworldstar.craftcrazesf.machines.ExperienceGenerator;
 
 public class CraftCrazeSF extends AbstractAddon implements SlimefunAddon {
 
@@ -52,6 +49,7 @@ public class CraftCrazeSF extends AbstractAddon implements SlimefunAddon {
   
         logger.log(Level.INFO, "Loading event listeners...");
         IronGolemPetListener IronGolemPetListener = new IronGolemPetListener();
+        ChickenPetListener ChickenPetListener = new ChickenPetListener();
         logger.log(Level.INFO, "Event listeners loaded!");
         
         

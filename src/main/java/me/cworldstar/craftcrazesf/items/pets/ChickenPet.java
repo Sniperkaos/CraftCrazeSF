@@ -2,22 +2,22 @@ package me.cworldstar.craftcrazesf.items.pets;
 
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
-import io.github.thebusybiscuit.slimefun4.core.attributes.NotPlaceable;
 
-public class IronGolemPet extends SlimefunItem implements NotPlaceable {
+public class ChickenPet extends SlimefunItem {
 
 	public double pet_integrity = 100.0; 
 	public ItemStack food;
-	public boolean enabled = false;
 	
-	public IronGolemPet(ItemGroup itemGroup, ItemStack item, String id, RecipeType recipeType, ItemStack[] recipe, ItemStack food) {
-		super(itemGroup, item, id, recipeType, recipe);
+	public ChickenPet(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, ItemStack food) {
+		super(itemGroup, item, recipeType, recipe);
 		this.food = food;
 	}
-
+	
 	public void reduce_integrity(int amount) {
 		
 		if(this.pet_integrity < amount) {
@@ -46,5 +46,5 @@ public class IronGolemPet extends SlimefunItem implements NotPlaceable {
 			}
 		}
 	}
-	
+
 }

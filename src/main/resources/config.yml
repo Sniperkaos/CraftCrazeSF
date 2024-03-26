@@ -5,6 +5,10 @@ lang:
    token-use: "&aYou have successfully used this {token}!"
    token-deny: "&fYou are unable to use this {token}!"
   
+machines:
+   experience-generator:
+      experience-per-tick: 0.02
+  
 tokens:
    basic:
       name: "&7Basic Research Token"
