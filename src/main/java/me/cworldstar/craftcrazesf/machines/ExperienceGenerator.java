@@ -9,6 +9,7 @@ import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -16,6 +17,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.joml.ConfigurationException;
 
 import io.github.mooy1.infinitylib.machines.AbstractMachineBlock;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
@@ -24,6 +26,7 @@ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.attributes.HologramOwner;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockPlaceHandler;
+import io.github.thebusybiscuit.slimefun4.libraries.commons.lang.Validate;
 import me.cworldstar.craftcrazesf.CraftCrazeSF;
 import me.cworldstar.craftcrazesf.utils.Utils;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu.MenuClickHandler;
@@ -36,6 +39,8 @@ public class ExperienceGenerator extends AbstractMachineBlock implements Hologra
 	
 	private double stored_experience = 0;
 	private double to_add = 0.02;
+	private int max_experience = 1000;
+	
 	
 	public ExperienceGenerator(ItemGroup category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
 		super(category, item, recipeType, recipe);
@@ -50,8 +55,23 @@ public class ExperienceGenerator extends AbstractMachineBlock implements Hologra
 			@Override
 			public void onPlayerPlace(BlockPlaceEvent e) {
 				try {
-					self.to_add = CraftCrazeSF.config().getDouble("experience-generator.experience-per-tick");
-				} finally {}
+					double ept = CraftCrazeSF.config().getDouble("experience-generator.experience-per-tick");
+					int meh = CraftCrazeSF.config().getInt("experience-generator.max-experience-held");
+					
+					//-- not null
+					Validate.notNull(ept);
+					Validate.notNull(meh);
+					
+					if(ept == 0.0 || meh == 0) {
+						throw new InvalidConfigurationException();
+					}
+					
+					self.to_add = ept;
+					self.max_experience = meh;
+				} catch(InvalidConfigurationException exception) {
+					CraftCrazeSF.logger.warning("A configuration exception has occured. Please check your configuration!");
+				} 
+				finally {}
 			}
 
 		});
@@ -72,8 +92,9 @@ public class ExperienceGenerator extends AbstractMachineBlock implements Hologra
 	@Override
 	public boolean process(Block b, BlockMenu menu) {
 		if(getCharge(b.getLocation()) > 100) {
-			stored_experience = Utils.clamp(0, 5000, stored_experience + to_add);
-			updateHologram(b, Utils.formatString("&eExperience Stored: ".concat(Double.toString(this.stored_experience).concat("/5000"))));
+			stored_experience = Utils.clamp(0, max_experience, stored_experience + to_add);
+			//-- updates the hologram
+			updateHologram(b, Utils.formatString("&eExperience Stored: ".concat(Double.toString(Math.round(this.stored_experience*100) / 100).concat("/").concat(Integer.toString(max_experience)))));
 			return true;
 		}
 		return false;
@@ -119,7 +140,7 @@ public class ExperienceGenerator extends AbstractMachineBlock implements Hologra
 				World w = p.getWorld();
 				Location L = p.getLocation();
 				w.spawnParticle(Particle.EXPLOSION_HUGE, L.getX(), L.getY() + 1, L.getZ(), 2);
-				w.playSound(L, Sound.ENTITY_VILLAGER_TRADE, 1, 1);
+				w.playSound(L, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
 		
 				p.sendMessage(Utils.formatString("&6> You have redeemed ".concat(Double.toString(self.stored_experience)).concat(" experience!")));
 				p.giveExp((int) self.stored_experience);

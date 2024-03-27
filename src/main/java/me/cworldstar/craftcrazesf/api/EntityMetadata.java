@@ -1,4 +1,4 @@
-package me.cworldstar.craftcrazesf.implementations;
+package me.cworldstar.craftcrazesf.api;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.metadata.FixedMetadataValue;

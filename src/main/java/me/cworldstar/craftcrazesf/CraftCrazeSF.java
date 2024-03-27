@@ -1,6 +1,7 @@
 package me.cworldstar.craftcrazesf;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,6 +14,7 @@ import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.config.Config;
 import me.cworldstar.craftcrazesf.commands.ListResearch;
 import me.cworldstar.craftcrazesf.commands.Token;
+import me.cworldstar.craftcrazesf.listeners.ArmorListener;
 import me.cworldstar.craftcrazesf.listeners.ChickenPetListener;
 import me.cworldstar.craftcrazesf.listeners.IronGolemPetListener;
 
@@ -50,6 +52,7 @@ public class CraftCrazeSF extends AbstractAddon implements SlimefunAddon {
         logger.log(Level.INFO, "Loading event listeners...");
         IronGolemPetListener IronGolemPetListener = new IronGolemPetListener();
         ChickenPetListener ChickenPetListener = new ChickenPetListener();
+        ArmorListener ArmorListener = new ArmorListener(new ArrayList<String>());
         logger.log(Level.INFO, "Event listeners loaded!");
         
         

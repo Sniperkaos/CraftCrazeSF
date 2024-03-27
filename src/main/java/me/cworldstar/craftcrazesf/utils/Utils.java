@@ -51,7 +51,7 @@ public class Utils {
 		
 		ArrayList<Integer> range = new ArrayList<Integer>();
 		
-		for(int i=0; i<= max; i++) {
+		for(int i=min; i<= max; i++) {
 			range.add(i);
 		}
 		
