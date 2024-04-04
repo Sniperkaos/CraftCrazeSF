@@ -1,10 +1,13 @@
 options:
   auto-update: true
-  
+  debug: false
 lang:
-   token-use: "&aYou have successfully used this {token}!"
-   token-deny: "&fYou are unable to use this {token}!"
-  
+   token-use: "&aYou have successfully used this %token%!"
+   token-deny: "&fYou are unable to use this %token%!"
+   player-first-join: 
+      - "&6Welcome %player_name% to the server!"
+   player-welcome-back:
+      - "&6Welcome back, %player_name%!"
 machines:
    experience-generator:
       energy-per-tick: 100
@@ -14,7 +17,9 @@ machines:
    quantum-server:
    automatic-sieve:
       
-   
+   block-breaker:
+      blacklisted-items:
+         - 
   
 tokens:
    basic:

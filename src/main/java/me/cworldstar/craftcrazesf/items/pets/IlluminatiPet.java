@@ -38,15 +38,15 @@ public class IlluminatiPet extends SlimefunItem implements NotPlaceable {
 					}
 				}
 				
-				List<SlimefunItem> items = Slimefun.getRegistry().getAllSlimefunItems();
+				List<SlimefunItem> items = Slimefun.getRegistry().getEnabledSlimefunItems();
 				int random = (int) (Math.random() * items.size());
 				SlimefunItem exists = items.get(random);
 				if(exists == null) {
 					return;
 				}
 				e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.BLOCK_AMETHYST_BLOCK_CHIME, 4, 1);
-				e.getPlayer().sendMessage("§2".concat(exists.getItemName()).concat(" confirmed!"));
-				e.getPlayer().getInventory().addItem(exists.getItem());
+				e.getPlayer().sendMessage("§2".concat(exists.getItemName()).concat("§r §2confirmed!"));
+				e.getPlayer().getInventory().addItem(exists.getItem().clone());
 				self.reduce_integrity(100);
 				
 				

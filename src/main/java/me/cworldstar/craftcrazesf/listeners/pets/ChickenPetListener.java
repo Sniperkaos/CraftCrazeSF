@@ -1,4 +1,4 @@
-package me.cworldstar.craftcrazesf.listeners;
+package me.cworldstar.craftcrazesf.listeners.pets;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -31,7 +31,7 @@ public class ChickenPetListener implements Listener {
 					// if this is too expensive we can change it later
 					SlimefunItem pet = SlimefunItem.getByItem(item);
 					if(pet == null) {
-						return;
+						continue;
 					}
 					if(pet instanceof ChickenPet) {
 						// remove the damage

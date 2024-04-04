@@ -1,10 +1,16 @@
 package me.cworldstar.craftcrazesf.utils;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import io.github.mooy1.infinitylib.metrics.json.JsonObjectBuilder;
+import io.github.mooy1.infinitylib.metrics.json.JsonObjectBuilder.JsonObject;
+import io.github.thebusybiscuit.slimefun4.libraries.unirest.json.JSONObject;
 import net.md_5.bungee.api.ChatColor;
 
 import org.bukkit.NamespacedKey;
@@ -45,6 +51,32 @@ public class Utils {
 	
 		return number;
 		
+	}
+	
+	//public static JsonObject unserialize(String JSON) {
+	//	new JsonObjectBuilder().
+	//}
+	
+	public static int RandomInteger(int min, int max) {
+		return (int) Math.floor(Math.random() * max + min);
+	}
+	
+	public static ArrayList<String> CreateLore(String...strings) {
+		ArrayList<String> returns = new ArrayList<String>();
+		for(String s : strings) {
+			returns.add(Utils.formatString(s));
+		}
+		
+		return returns;
+	}
+	
+	public static ArrayList<String> CreateLore(List<String> strings) {
+		ArrayList<String> returns = new ArrayList<String>();
+		for(String s : strings) {
+			returns.add(Utils.formatString(s));
+		}
+		
+		return returns;
 	}
 	
 	public static int[] IntegerRange(int min, int max) {

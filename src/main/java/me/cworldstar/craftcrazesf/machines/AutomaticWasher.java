@@ -3,8 +3,8 @@ package me.cworldstar.craftcrazesf.machines;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -22,40 +22,45 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
-
 import io.github.mooy1.infinitylib.machines.TickingMenuBlock;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.attributes.HologramOwner;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockPlaceHandler;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
-import io.github.thebusybiscuit.slimefun4.implementation.items.tools.GoldPan;
-import io.github.thebusybiscuit.slimefun4.implementation.items.tools.NetherGoldPan;
+import io.github.thebusybiscuit.slimefun4.libraries.commons.lang.math.RandomUtils;
 import me.cworldstar.craftcrazesf.CraftCrazeSF;
 import me.cworldstar.craftcrazesf.api.NonBurnable;
 import me.cworldstar.craftcrazesf.utils.Utils;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
 
-
-@SuppressWarnings("deprecation")
-public class AutomaticSieve extends TickingMenuBlock implements HologramOwner, NonBurnable {
-	
+public class AutomaticWasher extends TickingMenuBlock implements HologramOwner, NonBurnable {
+    private final ItemStack[] dusts = new ItemStack[] {
+            SlimefunItems.IRON_DUST,
+            SlimefunItems.GOLD_DUST,
+            SlimefunItems.COPPER_DUST,
+            SlimefunItems.TIN_DUST,
+            SlimefunItems.ZINC_DUST,
+            SlimefunItems.ALUMINUM_DUST,
+            SlimefunItems.MAGNESIUM_DUST,
+            SlimefunItems.LEAD_DUST,
+            SlimefunItems.SILVER_DUST
+        };
+	private String last_message = "Washing";
 	private int repeat = 0;
-    private final GoldPan goldPan = SlimefunItems.GOLD_PAN.getItem(GoldPan.class);
-    private final NetherGoldPan netherGoldPan = SlimefunItems.NETHER_GOLD_PAN.getItem(NetherGoldPan.class);
-	private String last_message = "Sifting";
     private static final BlockFace[] possibleFaces = {
             BlockFace.UP,
             BlockFace.NORTH,
             BlockFace.EAST,
             BlockFace.SOUTH,
             BlockFace.WEST
-        };
+    };
     
-	public AutomaticSieve(ItemGroup category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
+	public AutomaticWasher(ItemGroup category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
 		super(category, item, recipeType, recipe);
 	
 		
@@ -63,7 +68,7 @@ public class AutomaticSieve extends TickingMenuBlock implements HologramOwner, N
 			@Override
 			public void onPlayerBreak(BlockBreakEvent e, ItemStack item, List<ItemStack> drops) {
 				// TODO Auto-generated method stub
-				AutomaticSieve.this.removeHologram(e.getBlock());
+				AutomaticWasher.this.removeHologram(e.getBlock());
 			}
 			
 		});
@@ -71,7 +76,7 @@ public class AutomaticSieve extends TickingMenuBlock implements HologramOwner, N
 		addItemHandler(new BlockPlaceHandler(false) {
 			@Override
 			public void onPlayerPlace(BlockPlaceEvent e) {
-				AutomaticSieve.this.applyNonBurnable(CraftCrazeSF.getPlugin(CraftCrazeSF.class), e.getBlock());
+				AutomaticWasher.this.applyNonBurnable(CraftCrazeSF.getPlugin(CraftCrazeSF.class), e.getBlock());
 			}
 		});
 		
@@ -82,45 +87,37 @@ public class AutomaticSieve extends TickingMenuBlock implements HologramOwner, N
 		return true;
 	}
 	
+	
+	//-- works without chests
 	public void push(Map<Integer, ItemStack> itemsInInput, BlockMenu toPush) {
 		for(Entry<Integer, ItemStack> s : itemsInInput.entrySet()) {
-			if(s.getValue() != null) {
-				if(goldPan.isValidInput(s.getValue())) {
+			if(s.getValue() != null ) {
+				SlimefunItem sfItem = SlimefunItem.getByItem(s.getValue());
+				if(sfItem != null && sfItem.getItem().isSimilar(SlimefunItems.SIFTED_ORE)) {
 					toPush.consumeItem(s.getKey(), 1);
-					toPush.pushItem(goldPan.getRandomOutput().clone(), getOutputSlots());	
-				} else if(netherGoldPan.isValidInput(s.getValue())) {
-					toPush.consumeItem(s.getKey(), 1);
-					toPush.pushItem(netherGoldPan.getRandomOutput().clone(), getOutputSlots());
+					toPush.pushItem(this.dusts[RandomUtils.nextInt(this.dusts.length)].clone(), getOutputSlots());
 				}
 			}
 		}
 	}
 	
+	//-- works with chests
 	public void push(Map<Integer, ItemStack> itemsInInput, BlockMenu toPush, Inventory to) {
 		
 		Set<Entry<Integer, ItemStack>> set = itemsInInput.entrySet();
 		if(set == null) {
 			return;
 		}
-		
 		for(Entry<Integer, ItemStack> s : set) {
 			if(s.getValue() != null && s.getKey() != null) {
-				if(goldPan.isValidInput(s.getValue())) {
+				SlimefunItem sfItem = SlimefunItem.getByItem(s.getValue());
+				if(sfItem != null && sfItem.getItem().isSimilar(SlimefunItems.SIFTED_ORE)) {
 					toPush.consumeItem(s.getKey(), 1);
-					if(to != null) {
-						to.addItem(goldPan.getRandomOutput().clone());
-					} else {
-						toPush.pushItem(goldPan.getRandomOutput().clone());
-					}
-						
-				} else if(netherGoldPan.isValidInput(s.getValue())) {
-					toPush.consumeItem(s.getKey(), 1);
-					if(to != null) {
-						to.addItem(netherGoldPan.getRandomOutput().clone());
-					} else {
-						toPush.pushItem(netherGoldPan.getRandomOutput().clone());
-					}
+					to.addItem(this.dusts[RandomUtils.nextInt(this.dusts.length)].clone());
 				}
+//				} else {
+//					toPush.pushItem(this.dusts[RandomUtils.nextInt(this.dusts.length)].clone(), getOutputSlots());
+//				}
 			}
 		}
 	}
@@ -134,14 +131,12 @@ public class AutomaticSieve extends TickingMenuBlock implements HologramOwner, N
 		Location BlockLocation = underneath.getLocation();
 		//-- check below block
 		if(underneath.getBlockData().getMaterial() == Material.FIRE) {
-
-	
 			//-- it's fire, so we can continue
 			Map<Integer, ItemStack> itemsInInput = this.getItemsInInput(menu);
 			if(itemsInInput.size() == 0) {
 				//-- reset hologram repeat
 				this.repeat = 0;
-				this.last_message = "Sifting";
+				this.last_message = "Washing";
 				this.updateHologram(b, "Ready!");
 				return;
 			}
@@ -152,18 +147,18 @@ public class AutomaticSieve extends TickingMenuBlock implements HologramOwner, N
 			if(this.repeat >= 4) {
 				//-- reset hologram repeat
 				this.repeat = 0;
-				this.last_message = "Sifting";
+				this.last_message = "Washing";
 			}
 			
 			boolean pushed = false;
 			
-			for(BlockFace face : AutomaticSieve.possibleFaces) {
+			for(BlockFace face : AutomaticWasher.possibleFaces) {
 				if(b.getRelative(face).getBlockData().getMaterial().equals(Material.CHEST)) {
 					//-- output to the chest
 					Block relative = b.getRelative(face);
 					BlockState state = relative.getState();
 					if(state instanceof Chest) {
-						AutomaticSieve.this.push(itemsInInput, menu, ((Chest) state).getInventory());
+						AutomaticWasher.this.push(itemsInInput, menu, ((Chest) state).getInventory());
 						pushed = true;
 					} else {
 						
@@ -172,7 +167,7 @@ public class AutomaticSieve extends TickingMenuBlock implements HologramOwner, N
 			}
 			
 			if (pushed == false) {
-				AutomaticSieve.this.push(itemsInInput, menu);
+				AutomaticWasher.this.push(itemsInInput, menu);
 			}
 
 			
@@ -194,7 +189,7 @@ public class AutomaticSieve extends TickingMenuBlock implements HologramOwner, N
 							//-- notify players
 							for(Entity e : w.getNearbyEntities(b.getLocation(), 8, 8, 8)) {
 								if(e instanceof Player) {
-									e.sendMessage(Utils.formatString("&2[Automatic Sieve]: &fThe fire has extinguished."));
+									e.sendMessage(Utils.formatString("&2[Automatic Washer]: &fThe fire has extinguished."));
 								}
 							}
 						}
@@ -253,5 +248,4 @@ public class AutomaticSieve extends TickingMenuBlock implements HologramOwner, N
 				24,25
 		};
 	}
-
 }

@@ -33,3 +33,7 @@ commands:
 ## This is required and marks Slimefun as a plugin dependency.
 depend:
 - Slimefun
+- AdvancedEnchantments
+softdepend:
+- WorldEdit
+- PlaceholderAPI
