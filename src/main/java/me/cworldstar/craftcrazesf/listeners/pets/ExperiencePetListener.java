@@ -32,12 +32,15 @@ public class ExperiencePetListener implements Listener {
 			}
 			if(pet instanceof ExperiencePet) {
 				// increase exp gained by 50%
-				e.setAmount(e.getAmount() + (e.getAmount() / 2));
+
 				ExperiencePet ep = (ExperiencePet) pet;
-				if(ep.has_integrity()) {
-					ep.reduce_integrity(Math.random() * 12);
+				if(ep.has_integrity(item)) {
+					if(ep.onPetTrigger(item, p, i)) {
+						e.setAmount(e.getAmount() + (e.getAmount() / 2));
+						ep.reduce_integrity(item, Math.random() * 12);
+					}
 				} else {
-					ep.feed(e.getPlayer(), i);
+					ep.feed(item, e.getPlayer(), i);
 				}
 			}
 		}

@@ -37,10 +37,10 @@ public class ChickenPetListener implements Listener {
 						// remove the damage
 						e.setCancelled(true);
 						ChickenPet cp = (ChickenPet) pet;
-						if(cp.has_integrity()) {
-							cp.reduce_integrity((int) 0.1);
+						if(cp.has_integrity(item)) {
+							cp.reduce_integrity(item,e.getDamage() / 2);
 						} else {
-							cp.feed(i);
+							cp.feed(item, p, i);
 						}
 					}
 				}

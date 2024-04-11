@@ -20,17 +20,22 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPluginLoader;
 
+import io.github.mooy1.infinitylib.commands.SubCommand;
 import io.github.mooy1.infinitylib.core.AbstractAddon;
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.config.Config;
 import me.cworldstar.craftcrazesf.commands.ListResearch;
+import me.cworldstar.craftcrazesf.commands.Spawn;
 import me.cworldstar.craftcrazesf.commands.Token;
 import me.cworldstar.craftcrazesf.listeners.ArmorListener;
 import me.cworldstar.craftcrazesf.listeners.PlayerJoinEventListener;
 import me.cworldstar.craftcrazesf.listeners.pets.ChickenPetListener;
 import me.cworldstar.craftcrazesf.listeners.pets.ExperiencePetListener;
 import me.cworldstar.craftcrazesf.listeners.pets.IronGolemPetListener;
+import me.cworldstar.craftcrazesf.listeners.pets.SamuraiPetListener;
 import me.cworldstar.craftcrazesf.machines.compact.AbstractCompactMachine;
+import me.cworldstar.craftcrazesf.mobs.StaticMobController;
+import me.cworldstar.craftcrazesf.utils.LoreFormatter;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 
 public class CraftCrazeSF extends AbstractAddon implements SlimefunAddon {
@@ -58,7 +63,14 @@ public class CraftCrazeSF extends AbstractAddon implements SlimefunAddon {
 	public static Map<String, Block> compactMachineBlocks = new HashMap<String, Block>();
 	public static Map<String, Boolean> compactMachineStatus = new HashMap<String, Boolean>();
 	public static Map<String, BlockMenu> compactMachineMenus = new HashMap<String, BlockMenu>();
+	
+
+	
 	public static File data_folder;
+	
+	public static LoreFormatter getLoreFormatter() {
+		return new LoreFormatter();
+	}
 	
 	public static Optional<Boolean> getCompactMachineStatus(String id) {
 		return Optional.ofNullable(CraftCrazeSF.compactMachineStatus.get(id));
@@ -83,6 +95,10 @@ public class CraftCrazeSF extends AbstractAddon implements SlimefunAddon {
 	
 	public static BlockMenu menuFromInventory(Inventory clickedInventory) {
 		return compactMachineMenus.get(compactMachineInventoryIds.get(clickedInventory));
+	}
+	
+	public static CraftCrazeSF getMainPlugin() {
+		return CraftCrazeSF.getPlugin(CraftCrazeSF.class);
 	}
 	
 	public static void warn(String s) {
@@ -111,6 +127,7 @@ public class CraftCrazeSF extends AbstractAddon implements SlimefunAddon {
         IronGolemPetListener IronGolemPetListener = new IronGolemPetListener();
         ChickenPetListener ChickenPetListener = new ChickenPetListener();
         ExperiencePetListener ExperiencePetListener = new ExperiencePetListener();
+        SamuraiPetListener SamuraiPetListener = new SamuraiPetListener();
         PlayerJoinEventListener PlayerFirstJoinListener = new PlayerJoinEventListener();
         ArmorListener ArmorListener = new ArmorListener(new ArrayList<String>());
         logger.log(Level.INFO, "Event listeners loaded!");
@@ -118,8 +135,11 @@ public class CraftCrazeSF extends AbstractAddon implements SlimefunAddon {
         
         logger.log(Level.INFO, "Creating commands.");
         //commands
-        CommandExecutor list_research = new ListResearch(this);
-        this.getCommand("list_research").setExecutor(list_research);
+        SubCommand list_research = new ListResearch(this);
+        this.getAddonCommand().addSub(list_research);
+        
+        SubCommand spawn = new Spawn("spawn", "spawns a custom entity from this plugin", "ccsf.spawn");
+        this.getAddonCommand().addSub(spawn);
         
         CommandExecutor give_token = new Token();
         this.getCommand("token").setExecutor(give_token);
@@ -146,6 +166,8 @@ public class CraftCrazeSF extends AbstractAddon implements SlimefunAddon {
 			entry.getValue().save();
 			logger.log(Level.INFO, "Saved world " + entry.getKey() + " successfully.");
 		}
+		
+		StaticMobController.save();
 		
 	}
 

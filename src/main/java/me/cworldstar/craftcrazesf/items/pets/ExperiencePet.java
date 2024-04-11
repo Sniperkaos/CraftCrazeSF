@@ -1,6 +1,10 @@
 package me.cworldstar.craftcrazesf.items.pets;
 
+import java.util.Optional;
+
 import org.bukkit.Sound;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import io.github.thebusybiscuit.slimefun4.api.events.PlayerRightClickEvent;
@@ -19,24 +23,29 @@ public class ExperiencePet extends APet {
 		addItemHandler(new ItemUseHandler() {
 			@Override
 			public void onRightClick(PlayerRightClickEvent e) {
-				
 				ExperiencePet pet = ExperiencePet.this;
-				
-				if(pet.pet_integrity > 5.0) {
-					e.getPlayer().sendMessage(Utils.formatString("&fYour pet is not hungry right now. Current pet integrity: ").concat(Double.toString(pet.pet_integrity)));
-				} else {
-					if(ExperiencePet.this.feed(e.getPlayer(), e.getPlayer().getInventory())) {
-						e.getPlayer().sendMessage(Utils.formatString("&fYou've fed your pet! Current pet integrity: ").concat(Double.toString(pet.pet_integrity)));
-						e.getPlayer().playSound(e.getPlayer().getLocation(),Sound.ENTITY_PLAYER_LEVELUP,1, 1);
-						e.getPlayer().playSound(e.getPlayer().getLocation(),Sound.ENTITY_VILLAGER_CELEBRATE,1, 1);
+				Optional<Double> pet_integrity = pet.get_pet_integrity(e.getItem());
+				if(pet_integrity.isPresent()) {
+					double p_integ = pet_integrity.get();
+					if(p_integ > 5.0) {
+						e.getPlayer().sendMessage(Utils.formatString("&fYour pet is not hungry right now. Current pet integrity: ").concat(Double.toString(p_integ)));
 					} else {
-						e.getPlayer().sendMessage(Utils.formatString("&fYou don't have enough food for your pet to enjoy."));
+						if(ExperiencePet.this.feed(e.getItem(), e.getPlayer(), e.getPlayer().getInventory())) {
+							e.getPlayer().sendMessage(Utils.formatString("&fYou've fed your pet! Current pet integrity: ").concat(Double.toString(100.0)));
+							e.getPlayer().playSound(e.getPlayer().getLocation(),Sound.ENTITY_PLAYER_LEVELUP,1, 1);
+							e.getPlayer().playSound(e.getPlayer().getLocation(),Sound.ENTITY_VILLAGER_CELEBRATE,1, 1);
+						} else {
+							e.getPlayer().sendMessage(Utils.formatString("&fYou don't have enough food for your pet to enjoy."));
+						}
 					}
 				}
-
 			}
 		});
-		
 	}
-
+	
+	@Override
+	public boolean onPetTrigger(ItemStack i, Player p, Inventory inventory) {
+		p.sendMessage("&6> Your pet has increased your experience gain!");
+		return true;
+	}
 }

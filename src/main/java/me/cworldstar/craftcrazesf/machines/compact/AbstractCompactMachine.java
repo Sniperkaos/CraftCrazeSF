@@ -209,14 +209,12 @@ public class AbstractCompactMachine extends TickingMenuBlock {
 		}
     }
 	
-	@SuppressWarnings("deprecation")
 	@Override
 	protected void tick(Block b, BlockMenu menu) {
 		
 		Optional<String> compact_machine_id = CraftCrazeSF.getCompactMachineId(b);
 		
 		if(compact_machine_id.isPresent()) {
-			CraftCrazeSF.warn("updating menu reference");
 			CraftCrazeSF.compactMachineMenus.put(compact_machine_id.get(), menu);
 			CraftCrazeSF.compactMachineInventoryIds.put(menu.toInventory(), compact_machine_id.get());
 		}
@@ -242,7 +240,6 @@ public class AbstractCompactMachine extends TickingMenuBlock {
 		
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	protected void setup(BlockMenuPreset preset) {
 		// TODO Auto-generated method stub

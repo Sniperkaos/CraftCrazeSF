@@ -27,6 +27,11 @@ public class PlayerJoinEventListener implements Listener {
 		Player p = e.getPlayer();
 		if(p.getLastPlayed() <= 0) {
 			for(Player playerToSend : Bukkit.getOnlinePlayers()) {
+				
+				if(playerToSend.equals(e.getPlayer())) {
+					continue;
+				}
+				
 				ArrayList<String> lore = Utils.CreateLore(CraftCrazeSF.config().getStringList("lang.player-first-join"));
 				for(String lore_line : lore) {
 					if(CraftCrazeSF.PlaceholderAPI_Loaded) {
@@ -37,8 +42,12 @@ public class PlayerJoinEventListener implements Listener {
 				}
 			}
 		} else {
-			
 			for(Player playerToSend : Bukkit.getOnlinePlayers()) {
+				
+				if(playerToSend.equals(e.getPlayer())) {
+					continue;
+				}
+				
 				ArrayList<String> lore = Utils.CreateLore(CraftCrazeSF.config().getStringList("lang.player-welcome-back"));
 				for(String lore_line : lore) {
 					if(CraftCrazeSF.PlaceholderAPI_Loaded) {
@@ -47,6 +56,16 @@ public class PlayerJoinEventListener implements Listener {
 						playerToSend.sendMessage(lore_line.replaceAll("%player_name%", p.getName()));
 					}
 				}
+			}
+		}
+		
+		//motd
+		ArrayList<String> motd_lore = Utils.CreateLore(CraftCrazeSF.config().getStringList("lang.player-motd"));
+		for(String motd_lore_line : motd_lore) {
+			if(CraftCrazeSF.PlaceholderAPI_Loaded) {
+				e.getPlayer().sendMessage(PlaceholderAPI.setPlaceholders(e.getPlayer(), motd_lore_line));
+			} else {
+				e.getPlayer().sendMessage(motd_lore_line.replaceAll("%player_name%", p.getName()));
 			}
 		}
 	}

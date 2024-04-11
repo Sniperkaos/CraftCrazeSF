@@ -33,10 +33,12 @@ public abstract class TickingBlock extends SlimefunItem {
 		});
 	}
 	
+	public abstract void tick(Block b, SlimefunItem item);
+	
 	public void setSynchronized(boolean b) {
 		this.in_sync = b;
 	}
 	
-	abstract void tick(Block b, SlimefunItem item);
+
 
 }

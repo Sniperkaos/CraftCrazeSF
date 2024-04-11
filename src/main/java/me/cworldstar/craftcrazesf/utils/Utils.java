@@ -8,12 +8,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+
 import io.github.mooy1.infinitylib.metrics.json.JsonObjectBuilder;
 import io.github.mooy1.infinitylib.metrics.json.JsonObjectBuilder.JsonObject;
 import io.github.thebusybiscuit.slimefun4.libraries.unirest.json.JSONObject;
 import net.md_5.bungee.api.ChatColor;
 
 import org.bukkit.NamespacedKey;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 
 
 public class Utils {
@@ -79,6 +84,10 @@ public class Utils {
 		return returns;
 	}
 	
+	public static JsonElement fromBlockStorage(String json) {
+		return JsonParser.parseString(json);
+	}
+	
 	public static int[] IntegerRange(int min, int max) {
 		
 		ArrayList<Integer> range = new ArrayList<Integer>();
@@ -103,6 +112,23 @@ public class Utils {
 	
 		return d;
 		
+	}
+	
+	public static BlockFace[] faces = {
+			BlockFace.DOWN,
+			BlockFace.EAST,
+			BlockFace.WEST,
+			BlockFace.SOUTH,
+			BlockFace.UP,
+			BlockFace.NORTH
+	};
+	
+	public static Block[] getSurroundingBlocks(Block center) {
+		Block[] blocks = new Block[] {};
+		for(BlockFace f : faces) {
+			blocks[blocks.length] = center.getRelative(f);
+		}
+		return blocks;
 	}
 	
 }

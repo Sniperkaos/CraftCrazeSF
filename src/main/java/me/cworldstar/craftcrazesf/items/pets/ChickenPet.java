@@ -1,50 +1,17 @@
 package me.cworldstar.craftcrazesf.items.pets;
 
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+import me.cworldstar.craftcrazesf.items.APet;
 
-public class ChickenPet extends SlimefunItem {
+public class ChickenPet extends APet {
 
-	public double pet_integrity = 100.0; 
-	public ItemStack food;
-	
-	public ChickenPet(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, ItemStack food) {
-		super(itemGroup, item, recipeType, recipe);
-		this.food = food;
-	}
-	
-	public void reduce_integrity(int amount) {
+	public ChickenPet(ItemGroup itemGroup, ItemStack item, String id, RecipeType recipeType, ItemStack[] recipe, ItemStack food, int eat_amount) {
+		super(itemGroup, item, id, recipeType, recipe);
 		
-		if(this.pet_integrity < amount) {
-			this.pet_integrity = 0;
-		} else {
-			this.pet_integrity -= (double) amount;
-		}
-
+		this.setFood(food);
+		this.setEatAmount(eat_amount);
 	}
-
-	public boolean has_integrity() {
-		return this.pet_integrity > 0;
-	}
-	
-	public void feed(Inventory i) {
-		ItemStack food = this.food;
-		for(ItemStack item : i.getContents()) {
-			
-			if(item == null) {
-				continue;
-			}
-			
-			if (item.isSimilar(food)) {
-				item.setAmount(item.getAmount() - 1);
-				this.pet_integrity = 100;
-			}
-		}
-	}
-
 }

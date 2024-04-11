@@ -22,6 +22,7 @@ import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import me.cworldstar.craftcrazesf.CraftCrazeSF;
 import me.cworldstar.craftcrazesf.api.handlers.PlayerEquipArmor;
 import me.cworldstar.craftcrazesf.items.armors.AbstractArmor;
 import me.cworldstar.craftcrazesf.listeners.ArmorEquipEvent.EquipMethod;
@@ -40,6 +41,8 @@ public class ArmorListener implements Listener {
 	private final List<String> blockedMaterials;
 
 	public ArmorListener(List<String> blockedMaterials){
+		CraftCrazeSF plugin = CraftCrazeSF.getMainPlugin();
+		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 		this.blockedMaterials = blockedMaterials;
 	}
 	//Event Priority is highest because other plugins might cancel the events before we check.

@@ -33,6 +33,7 @@ import me.cworldstar.craftcrazesf.items.pets.ChickenPet;
 import me.cworldstar.craftcrazesf.items.pets.ExperiencePet;
 import me.cworldstar.craftcrazesf.items.pets.IlluminatiPet;
 import me.cworldstar.craftcrazesf.items.pets.IronGolemPet;
+import me.cworldstar.craftcrazesf.items.pets.SamuraiPet;
 import me.cworldstar.craftcrazesf.items.tokens.BasicMachineToken;
 import me.cworldstar.craftcrazesf.machines.AdvancedDisenchanter;
 import me.cworldstar.craftcrazesf.machines.AutomaticSieve;
@@ -72,6 +73,8 @@ public class Registry {
 	public static final CustomItemStack ADVANCED_DISENCHANTER_ITEM = new CustomItemStack(Material.ENCHANTING_TABLE);
 	public static final CustomItemStack SMALL_COMPACT_MACHINE_ITEM = new CustomItemStack(Material.CRYING_OBSIDIAN);
 	public static final CustomItemStack COMPACT_MACHINE_IO_ITEM = new CustomItemStack(Material.NETHERITE_BLOCK);
+	public static final CustomItemStack SAMURAI_PET_ITEM = new CustomItemStack(SlimefunUtils.getCustomHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTI5ZWZlOWU2N2Y3ZmFjYmNlOTViNWVlM2E5Nzc5ZWFlZDM4OTc4ODRjNGNhY2I5MTAxN2Q2OWYzNDMzMTg0YiJ9fX0="), "&6Pets");
+	
 	
 	// tokens
 	public static SlimefunItemStack TOKEN_BASIC_MACHINES; 
@@ -86,6 +89,8 @@ public class Registry {
 	public static SlimefunItemStack ILLUMINATI_PET;
 	public static SlimefunItemStack CHICKEN_PET;
 	public static SlimefunItemStack EXPERIENCE_PET;
+	public static SlimefunItemStack SAMURAI_PET;
+	
 	
 	//machines
 	public static SlimefunItemStack EXPERIENCE_GENERATOR;
@@ -137,7 +142,7 @@ public class Registry {
 		Registry.ADVANCED_DISENCHANTER = new SlimefunItemStack("SF_ADVANCED_DISENCHANTER", ADVANCED_DISENCHANTER_ITEM, "&cAE Advanced Disenchanter", "", "&f> Can remove AE enchants!");
 		Registry.SMALL_COMPACT_MACHINE = new SlimefunItemStack("SMALL_COMPACT_MACHINE", SMALL_COMPACT_MACHINE_ITEM, "&fSmall Compact Machine", "", "&f> Contains a small 8x8 dimension.");
 		Registry.COMPACT_MACHINE_IO = new SlimefunItemStack("COMPACT_MACHINE_IO", COMPACT_MACHINE_IO_ITEM, "&fCompact Machine IO", "", "&f> Allows items to be moved between the compact", "&fmachine and the dimension.");
-		
+		Registry.SAMURAI_PET = new SlimefunItemStack("SAMURAI_PET", SAMURAI_PET_ITEM, "&6Samurai Pet", "", "&f> You are able to critically strike for", "&f75% extra damage every 8 hits.");
 		
 		SubGroup token_group = new SubGroup("token_group", Registry.ITEM_GROUP_TOKENS);
 		SubGroup machine_group = new SubGroup("machine_group", Registry.ITEM_GROUP_MACHINES);
@@ -228,7 +233,7 @@ public class Registry {
 		PetCatalyst.register(addon);
 		new IronGolemPet(this.pet_group, IRON_GOLEM_PET, "IRON_GOLEM_PET", RecipeType.NULL, new ItemStack[] {}, new ItemStack(Material.IRON_NUGGET)).register(this.addon);
 		new IlluminatiPet(this.pet_group, ILLUMINATI_PET, RecipeType.NULL, new ItemStack[] {}, new ItemStack(Material.DIAMOND_BLOCK)).register(this.addon);
-		new ChickenPet(this.pet_group, CHICKEN_PET, RecipeType.NULL, new ItemStack[] {}, new ItemStack(Material.WHEAT_SEEDS)).register(this.addon);
+		new ChickenPet(this.pet_group, CHICKEN_PET,"CHICKEN_PET", RecipeType.NULL, new ItemStack[] {}, new ItemStack(Material.WHEAT_SEEDS), 8).register(this.addon);
 		new ExperiencePet(this.pet_group, EXPERIENCE_PET, "EXPERIENCE_PET", RecipeType.ANCIENT_ALTAR, new ItemStack[] {
 				new ItemStack(Material.EXPERIENCE_BOTTLE), new ItemStack(Material.NETHERITE_BLOCK), SlimefunItems.TALISMAN_WISE, 
 				SlimefunItems.TALISMAN_TRAVELLER, PET_CATALYST , SlimefunItems.ENCHANTMENT_RUNE, 
@@ -242,6 +247,13 @@ public class Registry {
 				SlimefunItems.ALUMINUM_BRONZE_INGOT, SlimefunItems.ADVANCED_CIRCUIT_BOARD, SlimefunItems.ALUMINUM_BRONZE_INGOT,
 				SlimefunItems.DURALUMIN_INGOT, SlimefunItems.EXP_COLLECTOR, SlimefunItems.DURALUMIN_INGOT
 		}).register(this.addon);
+		
+		new SamuraiPet(this.pet_group, SAMURAI_PET, "SAMURAI_PET", RecipeType.MAGIC_WORKBENCH, new ItemStack[] {
+				PET_CATALYST, new ItemStack(Material.NETHERITE_SWORD), new ItemStack(Material.DIAMOND_SWORD),
+				new ItemStack(Material.IRON_SWORD), new ItemStack(Material.GOLDEN_SWORD), PET_CATALYST,
+				SlimefunItems.SWORD_OF_BEHEADING, PET_CATALYST, SlimefunItems.SEISMIC_AXE
+		}).register(addon);
+		
 		
 		// hazmat boots
 		new AdvancedHazmat(this.armor_group, ADVANCED_HAZMAT_BOOTS, RecipeType.NULL, new ItemStack[] {}, null, null).register(this.addon);
@@ -259,9 +271,9 @@ public class Registry {
 				SlimefunItems.ELECTRIC_MOTOR, SlimefunItems.WATER_RUNE, SlimefunItems.ADVANCED_CIRCUIT_BOARD,
 				SlimefunItems.REINFORCED_ALLOY_INGOT, SlimefunItems.HEATING_COIL, SlimefunItems.REINFORCED_ALLOY_INGOT
 		}).register(this.addon);
-		new AdvancedDisenchanter(this.machine_group, ADVANCED_DISENCHANTER, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
-				SlimefunItems.AUTO_DISENCHANTER_2, SlimefunItems.BOOSTED_URANIUM
-		}).register(this.addon);
+		//new AdvancedDisenchanter(this.machine_group, ADVANCED_DISENCHANTER, RecipeType.NULL, new ItemStack[] {
+		//		SlimefunItems.AUTO_DISENCHANTER_2, SlimefunItems.BOOSTED_URANIUM
+		//}).register(this.addon);
 		new ChunkLoader(this.machine_group, CHUNK_LOADER, RecipeType.NULL, new ItemStack[] {}).register(this.addon);
 		new SmallCompactMachine(this.machine_group, SMALL_COMPACT_MACHINE, RecipeType.NULL, new ItemStack[] {}).register(this.addon);
 		new CompactMachineIO(this.machine_group, COMPACT_MACHINE_IO, RecipeType.NULL, new ItemStack[] {}).register(this.addon);

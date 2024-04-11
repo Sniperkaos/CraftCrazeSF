@@ -4,12 +4,18 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-public class ConsoleSay implements CommandExecutor  {
+import me.cworldstar.craftcrazesf.utils.Utils;
+
+public class CraftCrazeSF implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		// check permission
-
+		switch(args[1]) {
+			case "reload":
+				
+			default:
+				sender.sendMessage(Utils.formatString("&6> This command does not exist."));
+		}
 		return true;
 	}
 
