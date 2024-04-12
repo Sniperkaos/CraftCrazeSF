@@ -66,8 +66,8 @@ public class Set {
 				}
 			}
 		}
-		CraftCrazeSF.log(Level.INFO, "validated? " + Boolean.toString(parts >= items.size()));
-		return (parts >= items.size());
+		CraftCrazeSF.log(Level.INFO, "validated? " + Boolean.toString(parts >= armor_contents.size()));
+		return (parts >= armor_contents.size());
 	}
 	
 	public void AddArmorPart(ItemStack i) {
