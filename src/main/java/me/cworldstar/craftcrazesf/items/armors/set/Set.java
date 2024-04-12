@@ -2,6 +2,7 @@ package me.cworldstar.craftcrazesf.items.armors.set;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,11 +51,16 @@ public class Set {
 	
 	public boolean ValidateSet(List<ItemStack> items) {
 		int parts = 0;
+		items.removeAll(Collections.singleton(null));
 		CraftCrazeSF.log(Level.INFO, "validating set");
 		for(ItemStack item : armor_contents) {
 			for(ItemStack to_compare : items) {
-				CraftCrazeSF.log(Level.INFO, "comparing set: " + item.toString() + " : " + to_compare.toString());
+				if(to_compare == null) {
+					continue;
+				}
+				CraftCrazeSF.log(Level.INFO, "comparing set: " + item.toString() + " | AGAINST |  " + to_compare.toString());
 				if(item.isSimilar(to_compare)) {
+					CraftCrazeSF.log(Level.INFO, "parts: " + Integer.toString(parts) + " : " + items.size());
 					CraftCrazeSF.log(Level.INFO, "yes");
 					parts += 1;
 				}

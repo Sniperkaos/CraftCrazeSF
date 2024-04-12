@@ -1,5 +1,6 @@
 package me.cworldstar.craftcrazesf.items.armors;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -58,7 +59,8 @@ public class AdvancedHazmat extends AbstractArmor {
 		addItemHandler(new PlayerEquipArmor() {
 			@Override
 			public void onPlayerEquipArmor(ArmorEquipEvent e) {
-				List<ItemStack> armorPieces = Arrays.asList(e.getAllArmorPieces());
+				List<ItemStack> armorPieces = new ArrayList<ItemStack>();
+				armorPieces.addAll(Arrays.asList(e.getAllArmorPieces()));
 				armorPieces.add(e.getNewArmorPiece());
 				if(Set.Sets.ADVANCED_HAZMAT.getSet().ValidateSet(armorPieces)) {
 					equip(e);
