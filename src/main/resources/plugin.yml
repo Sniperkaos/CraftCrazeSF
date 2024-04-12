@@ -21,24 +21,10 @@ version: ${project.version}
 api-version: 1.20
 
 commands:
-
    CraftCrazeSF:
       description: main command
       usage: /<command>
 
-   token:
-      description: gives the player a token
-      usage: /<command> <player> <token>
-      permission: ccsf.token
-   list_research:
-      description: lists all loaded slimefun researches
-      usage: /<command>
-      permission: ccsf.listresearch
+depend: [Slimefun, InfinityExpansion]
 
-## This is required and marks Slimefun as a plugin dependency.
-depend:
-- Slimefun
-- AdvancedEnchantments
-softdepend:
-- WorldEdit
-- PlaceholderAPI
+softdepend: [WorldEdit, PlaceholderAPI, AdvancedEnchantments]

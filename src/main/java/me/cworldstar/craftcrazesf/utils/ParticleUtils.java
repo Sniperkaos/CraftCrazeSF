@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.Particle.DustOptions;
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
 
@@ -29,10 +30,10 @@ public class ParticleUtils {
     		L.getWorld().spawnParticle(p,L,ParticlesPerPoint,offset,offset,offset,0.0);
     	}
     }
-    public static void SpawnInCircle(Location center, Particle p,double radius, int amountOfPoints,int ParticlesPerPoint) {
+    public static void SpawnInCircle(Location center, Particle p,double radius, int amountOfPoints,int ParticlesPerPoint, DustOptions options) {
     	ArrayList<Location> Particles = getCircle(center,radius,amountOfPoints);
     	for(Location L : Particles) {
-    		L.getWorld().spawnParticle(p,L,ParticlesPerPoint,0.0,0.0,0.0,0.0);
+    		L.getWorld().spawnParticle(p,L,ParticlesPerPoint,0.0,0.0,0.0,0.0, options);
     	}
     }
 	public static void DripFromHead(LivingEntity e, Particle crimsonSpore) {

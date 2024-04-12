@@ -13,12 +13,14 @@ import com.google.gson.JsonParser;
 
 import io.github.mooy1.infinitylib.metrics.json.JsonObjectBuilder;
 import io.github.mooy1.infinitylib.metrics.json.JsonObjectBuilder.JsonObject;
+import io.github.thebusybiscuit.slimefun4.libraries.commons.lang.math.RandomUtils;
 import io.github.thebusybiscuit.slimefun4.libraries.unirest.json.JSONObject;
 import net.md_5.bungee.api.ChatColor;
 
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.inventory.ItemStack;
 
 
 public class Utils {
@@ -114,6 +116,10 @@ public class Utils {
 		
 	}
 	
+	public static Object getRandomObject(Object[] ol) {
+		return ol[RandomUtils.nextInt(ol.length)];
+	}
+	
 	public static BlockFace[] faces = {
 			BlockFace.DOWN,
 			BlockFace.EAST,
@@ -129,6 +135,10 @@ public class Utils {
 			blocks[blocks.length] = center.getRelative(f);
 		}
 		return blocks;
+	}
+
+	public static <T extends Object> T getRandomListObject(ArrayList<T> ol) {
+		return ol.get(RandomUtils.nextInt(ol.size()));
 	}
 	
 }

@@ -2,6 +2,7 @@ package me.cworldstar.craftcrazesf.mobs;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -19,14 +20,18 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import io.github.thebusybiscuit.slimefun4.libraries.commons.lang.math.RandomUtils;
 import me.cworldstar.craftcrazesf.CraftCrazeSF;
 import me.cworldstar.craftcrazesf.mobs.EntityDialog.*;
 import me.cworldstar.craftcrazesf.mobs.skills.Skill;
 import me.cworldstar.craftcrazesf.mobs.skills.Skill.SkillType;
 import me.cworldstar.craftcrazesf.utils.Speak;
+import me.cworldstar.craftcrazesf.utils.Utils;
 
 public abstract class AbstractBoss implements Listener {
 	
@@ -59,25 +64,48 @@ public abstract class AbstractBoss implements Listener {
 		}
 	}
 	
-	@EventHandler(priority = EventPriority.HIGH)
-	public void onEntityDamage(EntityDamageByEntityEvent e) {
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onEntityDamage(EntityDamageEvent e) {
 		if(e.getEntity().getUniqueId().equals(BossEntity.getUniqueId())) {
 			this.onEntityDamagedModifier(e);
-		} else if (e.getDamager().getUniqueId().equals(BossEntity.getUniqueId())) {
+		} 
+		
+		if(e.getDamageSource().getCausingEntity() == null) {
+			return;
+		}
+		
+		if (e.getDamageSource().getCausingEntity().getUniqueId().equals(BossEntity.getUniqueId())) {
 			this.onEntityDamagingModifier(e);
 		}
 	}
 	
-	protected void onDeath() {
-		death();
+	@EventHandler(priority = EventPriority.LOW)
+	public void onEntityDeath(EntityDeathEvent e) {
+		if(e.getEntity().getUniqueId().equals(BossEntity.getUniqueId())) {
+			onDeath(e);
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.LOW)
+	public void onEntityDropItem(EntityDropItemEvent e) {
+		if(e.getEntity().getUniqueId().equals(BossEntity.getUniqueId())) {
+			dropItem(e);
+		}
+	}
+	
+	protected void onDeath(EntityDeathEvent e) {
+		death(e);
 		HandlerList.unregisterAll(this);
 	}
 	
-	protected abstract void death();
 	
-	protected abstract void onEntityDamagedModifier(EntityDamageByEntityEvent e);
+	protected abstract void dropItem(EntityDropItemEvent e);
 	
-	protected abstract void onEntityDamagingModifier(EntityDamageByEntityEvent e);
+	protected abstract void death(EntityDeathEvent e);
+	
+	protected abstract void onEntityDamagedModifier(EntityDamageEvent e);
+	
+	protected abstract void onEntityDamagingModifier(EntityDamageEvent e);
 	
 	public LivingEntity getEntity() {
 		return this.BossEntity;
@@ -102,8 +130,7 @@ public abstract class AbstractBoss implements Listener {
 	protected abstract void applyEntityEdits(LivingEntity e);
 	
 	public void re_register() {
-		this.onRegister();
-		StaticMobController.mobs.put(boss_identifier.toString(), BossEntity);
+		this.register();
 	}
 	
 	public void useRandomSkill() {
@@ -114,7 +141,12 @@ public abstract class AbstractBoss implements Listener {
 			}
 		}
 		
-		active_skills.get(new Random().nextInt(active_skills.size())).use();
+		Skill chosen_skill = active_skills.get(new Random().nextInt(active_skills.size()));
+		
+		if(this.chat_manager.skillHasDialog(chosen_skill.id)) {
+			Speak.AOEMessage(BossEntity, Utils.formatString( this.chat_manager.randomSkillDialog(chosen_skill.id) ), 12, Sound.BLOCK_NOTE_BLOCK_IMITATE_WITHER_SKELETON);
+		}		
+		chosen_skill.use();
 	}
 	
 	public void register() {
@@ -158,18 +190,32 @@ public abstract class AbstractBoss implements Listener {
 				AbstractBoss self = AbstractBoss.this;
 				
 				if(self.getEntity().isDead()) {
-					onDeath();
 					this.cancel();
+					return;
 				}
 				
-				for(Entity e : self.BossEntity.getNearbyEntities(12, 12, 12)) {
+				List<Entity> nearby_entities = self.BossEntity.getNearbyEntities(12, 12, 12);	
+				
+				for(Entity e : nearby_entities) {
 					if(e instanceof Player) {
 						if(!self.triggered) {
-							Speak.AOEMessage(self.BossEntity, "test", 20, Sound.BLOCK_NOTE_BLOCK_IMITATE_WITHER_SKELETON);
+							Speak.AOEMessage(self.BossEntity, Utils.formatString("&4&k[&r &4You have been noticed. &k]&r"), 20, Sound.ENTITY_LIGHTNING_BOLT_IMPACT);
 							self.triggered = true;
+							if(!nearby_players.contains((Player) e)) {
+								nearby_players.add((Player) e);
+							}
+							self.target = nearby_players.get(RandomUtils.nextInt(nearby_players.size()));
 						}
-						nearby_players.add((Player) e);
-						self.target = nearby_players.get(0);
+					}
+				}
+				
+				
+				for(Player p : nearby_players) {
+					if(!nearby_entities.contains(p)) {
+						if(self.target.equals(p)) {
+							self.target = nearby_players.get(RandomUtils.nextInt(nearby_players.size())) ;
+						}
+						nearby_players.remove(p);
 					}
 				}
 				
@@ -186,6 +232,7 @@ public abstract class AbstractBoss implements Listener {
 				
 				if(self.getEntity().isDead()) {
 					this.cancel();
+					return;
 				}
 			
 				self.useRandomSkill();
@@ -203,6 +250,8 @@ public abstract class AbstractBoss implements Listener {
 	}
 
 	public void addSkill(String skill_id, Skill skill) {
+		skill.setId(skill_id);
+		skill.lock();
 		this.skills.put(skill_id, skill);
 	}
 }

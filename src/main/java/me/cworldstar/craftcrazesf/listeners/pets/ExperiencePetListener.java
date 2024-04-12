@@ -37,7 +37,7 @@ public class ExperiencePetListener implements Listener {
 				if(ep.has_integrity(item)) {
 					if(ep.onPetTrigger(item, p, i)) {
 						e.setAmount(e.getAmount() + (e.getAmount() / 2));
-						ep.reduce_integrity(item, Math.random() * 12);
+						ep.reduce_integrity(item, Math.random() * 0.2);
 					}
 				} else {
 					ep.feed(item, e.getPlayer(), i);

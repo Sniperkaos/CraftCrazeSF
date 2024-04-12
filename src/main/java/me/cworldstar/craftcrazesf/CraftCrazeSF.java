@@ -29,6 +29,8 @@ import me.cworldstar.craftcrazesf.commands.Spawn;
 import me.cworldstar.craftcrazesf.commands.Token;
 import me.cworldstar.craftcrazesf.listeners.ArmorListener;
 import me.cworldstar.craftcrazesf.listeners.PlayerJoinEventListener;
+import me.cworldstar.craftcrazesf.listeners.SlimefunItemArmorListener;
+import me.cworldstar.craftcrazesf.listeners.SpawnListener;
 import me.cworldstar.craftcrazesf.listeners.pets.ChickenPetListener;
 import me.cworldstar.craftcrazesf.listeners.pets.ExperiencePetListener;
 import me.cworldstar.craftcrazesf.listeners.pets.IronGolemPetListener;
@@ -108,6 +110,13 @@ public class CraftCrazeSF extends AbstractAddon implements SlimefunAddon {
 		CraftCrazeSF.logger.log(Level.WARNING, s);
 	}
 	
+	public static void info(String s) {
+		if (!CraftCrazeSF.config().getBoolean("options.debug")) {
+			return;
+		}
+		CraftCrazeSF.logger.log(Level.INFO, s);
+	}
+	
 	
 	@SuppressWarnings("unused")
 	@Override
@@ -128,8 +137,10 @@ public class CraftCrazeSF extends AbstractAddon implements SlimefunAddon {
         ChickenPetListener ChickenPetListener = new ChickenPetListener();
         ExperiencePetListener ExperiencePetListener = new ExperiencePetListener();
         SamuraiPetListener SamuraiPetListener = new SamuraiPetListener();
+        SpawnListener SpawnListener = new SpawnListener();
         PlayerJoinEventListener PlayerFirstJoinListener = new PlayerJoinEventListener();
         ArmorListener ArmorListener = new ArmorListener(new ArrayList<String>());
+        SlimefunItemArmorListener SFArmorListener = new SlimefunItemArmorListener();
         logger.log(Level.INFO, "Event listeners loaded!");
         
         
@@ -141,8 +152,8 @@ public class CraftCrazeSF extends AbstractAddon implements SlimefunAddon {
         SubCommand spawn = new Spawn("spawn", "spawns a custom entity from this plugin", "ccsf.spawn");
         this.getAddonCommand().addSub(spawn);
         
-        CommandExecutor give_token = new Token();
-        this.getCommand("token").setExecutor(give_token);
+        SubCommand give_token = new Token("token", "gives a player a token", "ccsf.token");
+        this.getAddonCommand().addSub(give_token);
         
         logger.log(Level.INFO, "Commands done.");
      

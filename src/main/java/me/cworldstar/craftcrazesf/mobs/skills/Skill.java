@@ -17,6 +17,7 @@ public class Skill {
 	private int timer = 20;
 	private BukkitRunnable Skill;
 	private SkillType SkillType;
+	private boolean Locked = false;
 	public String id;
 	
 	public Skill(SkillType Type,BukkitRunnable Skill) {
@@ -39,6 +40,21 @@ public class Skill {
 
 	public SkillType getType() {
 		return this.SkillType;
+	}
+	
+	public String getId() {
+		return this.id;
+	}
+	
+	public void setId(String id) {
+		if(this.Locked) {
+			return;
+		}
+		this.id = id;
+	}
+	
+	public void lock() {
+		this.Locked = true;
 	}
 	
 	public void use() {

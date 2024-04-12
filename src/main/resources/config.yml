@@ -5,33 +5,26 @@ lang:
    token-use: "&aYou have successfully used this %token%!"
    token-deny: "&fYou are unable to use this %token%!"
    player-first-join: 
-      - "&6Welcome %player_name% to the server!"
+      - "&a&lWelcome %player_name% to the server!"
    player-welcome-back:
       - "&6Welcome back, %player_name%!"
    player-motd:
-      - "&6Welcome back, %player_name%!"
-      - "&4If you lost your experience generator, please open a ticket on our discord server."
+      - "&6&l&nWelcome, %player_name%!"
+      - "&e&lIf you encounter a bug, please open a ticket on our discord server."
+      - "&e&n( https://discord.gg/wNA3FfXSPg )"
 machines:
    experience-generator:
       energy-per-tick: 150
       energy-capacity: 2000
       experience-per-tick: 0.5
       max-experience-held: 2000
-   quantum-server:
-   automatic-sieve:
-      
-   block-breaker:
-      blacklisted-items:
 
 spawning:
-  virulean_zombie:
-    spawn_chance: 1    #1% chance to spawn when a hostile mob spawns. Double, so supports 0.00001 etc.
-    blacklisted_dimensions:
-      - world_nether
-      - world_the_end
-  
-  
-  
+   virulean_zombie:
+      spawn_chance: 100
+      blacklisted_dimensions:
+         - world_nether
+         - world_the_end
   
 tokens:
    basic:

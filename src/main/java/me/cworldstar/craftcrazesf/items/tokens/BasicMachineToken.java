@@ -50,7 +50,7 @@ public class BasicMachineToken extends AToken {
 			String to_say = Utils.formatString(CraftCrazeSF.cfg.getString("lang.token-use"));
 			Optional<SlimefunItem> sfItem = e.getSlimefunItem();
 			if(sfItem.isPresent()) {
-				to_say = to_say.replaceAll("\\{(token)\\}", CraftCrazeSF.cfg.getString("tokens.".concat(Registry.nameFromItem(sfItem.get())).concat(".name")));
+				to_say = to_say.replaceAll("%token%", CraftCrazeSF.cfg.getString("tokens.".concat(Registry.nameFromItem(sfItem.get())).concat(".name")));
 			} else {
 				to_say = "An error has occured.";
 			}

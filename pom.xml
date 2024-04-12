@@ -39,6 +39,11 @@
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
 
+		<repository>
+			<id>busy-biscuit</id>
+			<url>https://thebusybiscuit.github.io/builds/</url>
+		</repository>
+
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
@@ -159,13 +164,20 @@
     		<version>1.3.10</version>
     		<scope>compile</scope>
 		</dependency>
+		
 		<dependency>
 	        <groupId>ldapjdk</groupId>
 	        <artifactId>ldapjdk</artifactId>
 	        <scope>system</scope>
-	        <version>1.0</version>
+	        <version>4.0.0</version>
 	        <systemPath>C:\Users\rainb\Downloads\AdvancedEnchantments-8.7.4.jar</systemPath>
      	</dependency> 
+     	
+        <dependency>
+            <groupId>com.github.Mooy1</groupId>
+            <artifactId>InfinityExpansion</artifactId>
+            <version>1e83e7afa0</version>
+        </dependency>
         
     </dependencies>
 </project>

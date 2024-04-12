@@ -1,11 +1,13 @@
 package me.cworldstar.craftcrazesf.items.pets;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
@@ -28,7 +30,16 @@ public class SamuraiPet extends APet implements DataStorageItem {
 	public boolean onPetTrigger(ItemStack i, Player p, Inventory inventory) {
 		Optional<String> attacks = this.load(i,"attacks");
 		CraftCrazeSF.warn("attacking");
-		if(attacks.isPresent()) {	
+		if(attacks.isPresent()) {
+			
+			ItemMeta meta = i.getItemMeta();
+			List<String> lore = meta.getLore();
+			lore.replaceAll(string -> 
+				string.replaceAll("%attacks%", attacks.get())
+			);
+			meta.setLore(lore);
+			i.setItemMeta(meta);
+			
 			CraftCrazeSF.warn(attacks.get());
 			if(Integer.parseInt(attacks.get()) > 8) {
 				return true;
@@ -38,7 +49,10 @@ public class SamuraiPet extends APet implements DataStorageItem {
 			}
 		} 
 		CraftCrazeSF.warn("not present");
+
+		
 		this.store(i, "attacks", "1");
+		
 		return false;
 	}
 
