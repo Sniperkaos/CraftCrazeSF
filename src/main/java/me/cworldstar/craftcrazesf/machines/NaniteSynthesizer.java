@@ -16,6 +16,7 @@ import io.github.thebusybiscuit.slimefun4.core.attributes.HologramOwner;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
+import me.cworldstar.craftcrazesf.CraftCrazeSF;
 import me.cworldstar.craftcrazesf.Registry;
 import me.cworldstar.craftcrazesf.api.DataHolder;
 import me.cworldstar.craftcrazesf.utils.Speak;
@@ -83,10 +84,10 @@ public class NaniteSynthesizer extends AbstractMachineBlock implements HologramO
 			if(heat >= 600) {
 				// stops a runtime
 				Location loc = b.getLocation();
-				Slimefun.runSync(() -> {
+				CraftCrazeSF.runSync(() -> {
+					b.getWorld().createExplosion(loc, 16F);
 					b.breakNaturally();
 				});
-				b.getWorld().createExplosion(loc, 16F);
 			}
 			
 			ItemStack customized_working_item = Working.clone();

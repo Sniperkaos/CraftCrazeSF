@@ -10,6 +10,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.cworldstar.craftcrazesf.CraftCrazeSF;
+import me.cworldstar.craftcrazesf.nightmarket.Nightmarket;
 import me.cworldstar.craftcrazesf.utils.Utils;
 
 public class PlayerJoinEventListener implements Listener {
@@ -25,6 +26,7 @@ public class PlayerJoinEventListener implements Listener {
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent e) {
 		Player p = e.getPlayer();
+		Nightmarket.PlayerJoined(e.getPlayer());
 		if(p.getLastPlayed() <= 0) {
 			for(Player playerToSend : Bukkit.getOnlinePlayers()) {
 				

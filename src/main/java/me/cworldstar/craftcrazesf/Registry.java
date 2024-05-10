@@ -14,9 +14,13 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import io.github.mooy1.infinityexpansion.items.blocks.InfinityWorkbench;
 import io.github.mooy1.infinityexpansion.items.machines.SingularityConstructor;
@@ -29,6 +33,7 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.attributes.MachineTier;
 import io.github.thebusybiscuit.slimefun4.core.attributes.MachineType;
+import io.github.thebusybiscuit.slimefun4.core.attributes.ProtectionType;
 import io.github.thebusybiscuit.slimefun4.core.attributes.Radioactivity;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.config.Config;
@@ -37,6 +42,9 @@ import io.github.thebusybiscuit.slimefun4.utils.LoreBuilder;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import me.cworldstar.craftcrazesf.items.AbstractLootBox;
 import me.cworldstar.craftcrazesf.items.armors.AdvancedHazmat;
+import me.cworldstar.craftcrazesf.items.armors.TurboSwaglordLegendArmor;
+import me.cworldstar.craftcrazesf.items.armors.power.PowerArmor;
+import me.cworldstar.craftcrazesf.items.armors.power.cores.NanoCore;
 import me.cworldstar.craftcrazesf.items.pets.ChickenPet;
 import me.cworldstar.craftcrazesf.items.pets.ExperiencePet;
 import me.cworldstar.craftcrazesf.items.pets.IlluminatiPet;
@@ -53,6 +61,7 @@ import me.cworldstar.craftcrazesf.machines.NaniteSynthesizer;
 import me.cworldstar.craftcrazesf.machines.compact.SmallCompactMachine;
 import me.cworldstar.craftcrazesf.machines.compact.io.CompactMachineIO;
 import me.cworldstar.craftcrazesf.utils.Utils;
+import me.cworldstar.craftcrazesf.items.Drug;
 
 public class Registry {
 	
@@ -64,8 +73,13 @@ public class Registry {
 	private SubGroup pet_group;
 	private SubGroup mob_drops_group;
 	private SubGroup materials_group;
+	private SubGroup nope;
 	private CraftCrazeSF addon;
 	private Config config;
+	
+	//drugs
+	public static final SlimefunItemStack WARPOWDER = new SlimefunItemStack("SFDRUGS_WARPOWDER", Material.GLOWSTONE_DUST, "&6Warpowder", "", "&6You'll gain power, but the overdose is severe.", "&c&l&nOVERDOSE:", "&f- WITHER III", "&f- BLINDNESS III", "&f- HUNGER III", "&f- WEAKNESS III");
+	
 	
 	
 
@@ -151,9 +165,37 @@ public class Registry {
 	public static final ItemStack LEGENDARY_LOOT_CHEST_HEAD = SlimefunUtils.getCustomHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODhkMzg2NGNhNzU3MTAxYThmN2Y2MGI4MDkwNjVlNWQzMGE3YWQzMjQwMGE5OGVhYTU3OWNlZjAyOGExNGRjYSJ9fX0=");
 	public static final ItemStack MYTHICAL_LOOT_CHEST_HEAD = SlimefunUtils.getCustomHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjQxMmRjNTQzYTRiMGUwMzM5OGY2ZjBhZjFmNjgzNDBiZjU1Zjg5OTEwYjA4Nzk0ZWQ3MjM1NGJlMDcxY2ZjMCJ9fX0=");
 	
+
+	public static final SlimefunItemStack POWER_ARMOR_CORPORATE_CORE = new SlimefunItemStack("POWER_ARMOR_CORE_NANO",
+			
+			SlimefunUtils.getCustomHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzQ5Zjg2ZGZhOTM4YTI3MDNjNzYzYTcwNmU5OTVkMDc0NTBiZWQ4ZjdmNDUwMTY4NjI2NDM2YzJiNTJjNWE5NSJ9fX0="),
+			"&4&lExecutive Power Armor Core &7[&4IX&7]",
+			"",
+			"&7&l&nCore Bonus:",
+			"&c=> +20 Armor",
+			"&c=> +20 Health",
+			"&c=> 30% Damage Reduction",
+			LoreBuilder.powerCharged(0, 200000)
+			
+	);
+	
+	public static final SlimefunItemStack POWER_ARMOR_BASIC_CORE = new SlimefunItemStack("POWER_ARMOR_CORE_BASIC",
+			
+			SlimefunUtils.getCustomHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzQ5Zjg2ZGZhOTM4YTI3MDNjNzYzYTcwNmU5OTVkMDc0NTBiZWQ4ZjdmNDUwMTY4NjI2NDM2YzJiNTJjNWE5NSJ9fX0="),
+			"&eBasic Power Armor Core &7[&eI&7]",
+			"",
+			"&7&l&nCore Bonus:",
+			"&e=> Cheap!",
+			"&e=> But barely works.",
+			LoreBuilder.powerCharged(0, 2000)
+			
+	);
+	
+	public static final SlimefunItemStack HEMP = new SlimefunItemStack("HEMP", new ItemStack(Material.DEAD_BUSH),"&6Hemp Fiber", "&e=> Used for making cloth.");
+
 	
 	public static final SlimefunItemStack UNCOMMON_CHEST = new SlimefunItemStack(
-			"SFDRUGS_UNCOMMON_LOOT_CHEST",
+			"UNCOMMON_LOOT_CHEST",
 			UNCOMMON_LOOT_CHEST_HEAD,
 			"&aUncommon Loot Chest",
 			"",
@@ -229,6 +271,76 @@ public class Registry {
 	public static SlimefunItemStack COMPACT_MACHINE_IO;
 	
 	//armors
+	
+	public static CustomItemStack ADVANCED_HAZMAT_HELMET_ITEM = new CustomItemStack(Material.LEATHER_HELMET);
+	static {
+		LeatherArmorMeta meta = (LeatherArmorMeta) ADVANCED_HAZMAT_HELMET_ITEM.getItemMeta();
+		meta.setDisplayName(Utils.formatString("&4Advanced Hazmat Helmet"));
+		List<String> lore = new ArrayList<String>();
+		lore.add("");
+		lore.add(Utils.formatString("&7Stronger than diamond!"));
+		lore.add(Utils.formatString("&6Full Set Effects:"));
+		lore.add(Utils.formatString("&e-> Health Boost III."));
+		lore.add(Utils.formatString("&e-> Resistance II."));
+		lore.add(Utils.formatString("&e-> Fire Resistance I."));
+		lore.add(Utils.formatString("&e-> Water Breathing I."));
+		lore.add(Utils.formatString("&e-> Radiation immunity."));
+		meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DYE);
+		meta.setColor(Color.BLACK);
+		meta.setLore(lore);
+		meta.getPersistentDataContainer().set(CraftCrazeSF.createKey("durability"), PersistentDataType.INTEGER, 1460);
+		meta.getPersistentDataContainer().set(CraftCrazeSF.createKey("id"), PersistentDataType.STRING, "ADVANCED_HAZMAT_HELMET");
+		meta.addAttributeModifier(Attribute.GENERIC_ARMOR, new AttributeModifier(UUID.randomUUID(),"ADVANCED_HAZMAT_ARMOR",10,Operation.ADD_NUMBER));
+		meta.addAttributeModifier(Attribute.GENERIC_ARMOR_TOUGHNESS, new AttributeModifier(UUID.randomUUID(),"ADVANCED_HAZMAT_ARMOR",4,Operation.ADD_NUMBER));
+		ADVANCED_HAZMAT_HELMET_ITEM.setItemMeta(meta);
+	}
+	
+	public static CustomItemStack ADVANCED_HAZMAT_CHESTPLATE_ITEM = new CustomItemStack(Material.LEATHER_CHESTPLATE);
+	static {
+		LeatherArmorMeta meta = (LeatherArmorMeta) ADVANCED_HAZMAT_CHESTPLATE_ITEM.getItemMeta();
+		meta.setDisplayName(Utils.formatString("&4Advanced Hazmat Chestplate"));
+		List<String> lore = new ArrayList<String>();
+		lore.add("");
+		lore.add(Utils.formatString("&7Stronger than diamond!"));
+		lore.add(Utils.formatString("&6Full Set Effects:"));
+		lore.add(Utils.formatString("&e-> Health Boost III."));
+		lore.add(Utils.formatString("&e-> Resistance II."));
+		lore.add(Utils.formatString("&e-> Fire Resistance I."));
+		lore.add(Utils.formatString("&e-> Water Breathing I."));
+		lore.add(Utils.formatString("&e-> Radiation immunity."));
+		meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DYE);
+		meta.setColor(Color.BLACK);
+		meta.setLore(lore);
+		meta.getPersistentDataContainer().set(CraftCrazeSF.createKey("durability"), PersistentDataType.INTEGER, 1460);
+		meta.getPersistentDataContainer().set(CraftCrazeSF.createKey("id"), PersistentDataType.STRING, "ADVANCED_HAZMAT_CHESTPLATE");
+		meta.addAttributeModifier(Attribute.GENERIC_ARMOR, new AttributeModifier(UUID.randomUUID(),"ADVANCED_HAZMAT_ARMOR",12,Operation.ADD_NUMBER));
+		meta.addAttributeModifier(Attribute.GENERIC_ARMOR_TOUGHNESS, new AttributeModifier(UUID.randomUUID(),"ADVANCED_HAZMAT_ARMOR",4,Operation.ADD_NUMBER));
+		ADVANCED_HAZMAT_CHESTPLATE_ITEM.setItemMeta(meta);
+	}
+	
+	public static CustomItemStack ADVANCED_HAZMAT_LEGS_ITEM = new CustomItemStack(Material.LEATHER_LEGGINGS);
+	static {
+		LeatherArmorMeta meta = (LeatherArmorMeta) ADVANCED_HAZMAT_LEGS_ITEM.getItemMeta();
+		meta.setDisplayName(Utils.formatString("&4Advanced Hazmat Leggings"));
+		List<String> lore = new ArrayList<String>();
+		lore.add("");
+		lore.add(Utils.formatString("&7Stronger than diamond!"));
+		lore.add(Utils.formatString("&6Full Set Effects:"));
+		lore.add(Utils.formatString("&e-> Health Boost III."));
+		lore.add(Utils.formatString("&e-> Resistance II."));
+		lore.add(Utils.formatString("&e-> Fire Resistance I."));
+		lore.add(Utils.formatString("&e-> Water Breathing I."));
+		lore.add(Utils.formatString("&e-> Radiation immunity."));
+		meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DYE);
+		meta.setColor(Color.BLACK);
+		meta.setLore(lore);
+		meta.getPersistentDataContainer().set(CraftCrazeSF.createKey("durability"), PersistentDataType.INTEGER, 1460);
+		meta.getPersistentDataContainer().set(CraftCrazeSF.createKey("id"), PersistentDataType.STRING, "ADVANCED_HAZMAT_LEGS");
+		meta.addAttributeModifier(Attribute.GENERIC_ARMOR, new AttributeModifier(UUID.randomUUID(),"ADVANCED_HAZMAT_ARMOR",11,Operation.ADD_NUMBER));
+		meta.addAttributeModifier(Attribute.GENERIC_ARMOR_TOUGHNESS, new AttributeModifier(UUID.randomUUID(),"ADVANCED_HAZMAT_ARMOR",4,Operation.ADD_NUMBER));
+		ADVANCED_HAZMAT_LEGS_ITEM.setItemMeta(meta);
+	}
+	
 	public static CustomItemStack ADVANCED_HAZMAT_BOOTS_ITEM = new CustomItemStack(Material.LEATHER_BOOTS);
 	static {
 		LeatherArmorMeta meta = (LeatherArmorMeta) ADVANCED_HAZMAT_BOOTS_ITEM.getItemMeta();
@@ -236,16 +348,39 @@ public class Registry {
 		List<String> lore = new ArrayList<String>();
 		lore.add("");
 		lore.add(Utils.formatString("&7Stronger than diamond!"));
-		lore.add(Utils.formatString("&7Full Set Effects:"));
-		lore.add(Utils.formatString("&e- Radiation immunity."));
+		lore.add(Utils.formatString("&6Full Set Effects:"));
+		lore.add(Utils.formatString("&e-> Health Boost III."));
+		lore.add(Utils.formatString("&e-> Resistance II."));
+		lore.add(Utils.formatString("&e-> Fire Resistance I."));
+		lore.add(Utils.formatString("&e-> Water Breathing I."));
+		lore.add(Utils.formatString("&e-> Radiation immunity."));
 		meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DYE);
 		meta.setColor(Color.BLACK);
 		meta.setLore(lore);
-		meta.addAttributeModifier(Attribute.GENERIC_ARMOR, new AttributeModifier(UUID.randomUUID(),"SFDRUGS_DRUG_ARMOR",10,Operation.ADD_NUMBER,EquipmentSlot.FEET));
+		meta.getPersistentDataContainer().set(CraftCrazeSF.createKey("durability"), PersistentDataType.INTEGER, 1460);
+		meta.getPersistentDataContainer().set(CraftCrazeSF.createKey("id"), PersistentDataType.STRING, "ADVANCED_HAZMAT_BOOTS");
+		meta.addAttributeModifier(Attribute.GENERIC_ARMOR, new AttributeModifier(UUID.randomUUID(),"ADVANCED_HAZMAT_ARMOR",8,Operation.ADD_NUMBER));
+		meta.addAttributeModifier(Attribute.GENERIC_ARMOR_TOUGHNESS, new AttributeModifier(UUID.randomUUID(),"ADVANCED_HAZMAT_ARMOR",4,Operation.ADD_NUMBER));
 		ADVANCED_HAZMAT_BOOTS_ITEM.setItemMeta(meta);
 	}
 	
-	public static SlimefunItemStack ADVANCED_HAZMAT_BOOTS;
+	public static CustomItemStack SWAG_MONEY_PRO_OHIO_ITEM = new CustomItemStack(Material.LEATHER_LEGGINGS);
+	static {
+		LeatherArmorMeta meta = (LeatherArmorMeta) SWAG_MONEY_PRO_OHIO_ITEM.getItemMeta();
+		meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DYE);
+		meta.setColor(Color.fromRGB(207, 10, 207));
+		meta.getPersistentDataContainer().set(CraftCrazeSF.createKey("id"), PersistentDataType.STRING, "SWAG_MONEY_PRO_OHIO");
+		meta.addAttributeModifier(Attribute.GENERIC_ARMOR, new AttributeModifier(UUID.randomUUID(),"SFDRUGS_DRUG_ARMOR",200,Operation.ADD_NUMBER));
+		meta.setUnbreakable(true);
+		SWAG_MONEY_PRO_OHIO_ITEM.setItemMeta(meta);
+	}
+	
+	public static final SlimefunItemStack ADVANCED_HAZMAT_HELMET = new SlimefunItemStack("ADVANCED_HAZMAT_HELMET", ADVANCED_HAZMAT_HELMET_ITEM);
+	public static final SlimefunItemStack ADVANCED_HAZMAT_CHEST = new SlimefunItemStack("ADVANCED_HAZMAT_CHEST", ADVANCED_HAZMAT_CHESTPLATE_ITEM);
+	public static final SlimefunItemStack ADVANCED_HAZMAT_LEGS = new SlimefunItemStack("ADVANCED_HAZMAT_LEGS", ADVANCED_HAZMAT_LEGS_ITEM);
+	public static final SlimefunItemStack ADVANCED_HAZMAT_BOOTS = new SlimefunItemStack("ADVANCED_HAZMAT_BOOTS", ADVANCED_HAZMAT_BOOTS_ITEM);;
+	
+	public static final SlimefunItemStack SWAG_MONEY_PRO_OHIO = new SlimefunItemStack("SWAG_MONEY_PRO_OHIO", SWAG_MONEY_PRO_OHIO_ITEM, "&d&k&l|&r &e&l&mA$AP&r &3&l&nOHIO&r &2&l$MONEY&r &7&l&oSWAG&r &d&k&l|&r ", "", "&7Set Effects:", "&e-> TOO MUCH SWAG", "&e-> THE SWAG WILL KILL YOU", "&e-> PEOPLE ARE SO JEALOUS");
 	
 	
 	public Registry(CraftCrazeSF plugin, Config cfg) {
@@ -259,7 +394,6 @@ public class Registry {
 		Registry.ILLUMINATI_PET = new SlimefunItemStack("ILLUMINATI_PET", ILLUMINATI_PET_ITEM, "&eIlluminati Pet", "", "&f>> &4&nRight-Click&r &fto use!", "","&eSpawns in random items.","","&fFavorite Food: &b&nDiamond Block&r."); 
 		Registry.CHICKEN_PET = new SlimefunItemStack("CHICKEN_PET", CHICKEN_PET_ITEM, "&fChicken Pet", "", "&f>> You take no fall damage.", "", "&fFavorite Food: &nSeeds&r&f.");
 		Registry.AUTOMATIC_SIEVE = new SlimefunItemStack("AUTOMATIC_SIEVE", AUTOMATIC_SIEVE_ITEM, "&2Automatic Sieve", "", "&7> Requires &c&nfire&r&7 underneath!","&7> &6Does not require power&7!","","&7> Will output to nearby chests.");
-		Registry.ADVANCED_HAZMAT_BOOTS = new SlimefunItemStack("ADVANCED_HAZMAT_BOOTS", ADVANCED_HAZMAT_BOOTS_ITEM);
 		Registry.EXPERIENCE_PET = new SlimefunItemStack("EXPERIENCE_PET", EXPERIENCE_PET_ITEM, "&aExperience Pet", "", "&f>> Gain 50% more exp.", "&fFavorite Food: &e&nBottle o' Enchanting&r&f.");
 		Registry.AUTOMATIC_WASHER = new SlimefunItemStack("AUTOMATIC_WASHER", AUTOMATIC_WASHER_ITEM, "&fAutomatic Washer","", "&7> Requires &c&nfire&r&7 underneath!","&7> &6Does not require power&7!", "","&7> Will output to nearby chests.");
 		Registry.CHUNK_LOADER = new SlimefunItemStack("CCSF_CHUNK_LOADER", CHUNK_LOADER_ITEM, "&fChunk Loader", "", "&f> Force loads a chunk it's in.");
@@ -275,8 +409,9 @@ public class Registry {
 		SubGroup pet_group = new SubGroup("pet_group", Registry.ITEM_GROUP_PETS);
 		SubGroup mob_drops = new SubGroup("mob_drops", Registry.ITEM_GROUP_MOB_DROPS);
 		SubGroup materials_group = new SubGroup("materials_group", ITEM_GROUP_MATERIALS);
+		SubGroup nope = new SubGroup("troll", new SlimefunItemStack("FUN_ITEMS", Material.BARRIER, "&cFun Items (Admin Only)"));
 		
-		MultiGroup craze_craft_sf = new MultiGroup("main_group",Registry.ITEM_GROUP_MAIN, token_group, machine_group, magic_group, armor_group, pet_group );
+		MultiGroup craze_craft_sf = new MultiGroup("main_group",Registry.ITEM_GROUP_MAIN, token_group, machine_group, magic_group, armor_group, pet_group, mob_drops, materials_group );
 		craze_craft_sf.register(plugin);
 		
     	this.main_group = craze_craft_sf;
@@ -286,6 +421,7 @@ public class Registry {
     	this.armor_group = armor_group;
     	this.pet_group = pet_group;
     	this.mob_drops_group = mob_drops;
+    	this.nope = nope;
     	this.materials_group = materials_group;
     	
     	this.addon = plugin;
@@ -371,6 +507,10 @@ public class Registry {
 				SlimefunItems.ENCHANTMENT_RUNE, SlimefunItems.TALISMAN_HUNTER, SlimefunItems.TALISMAN_WIZARD
 		}, new ItemStack(Material.EXPERIENCE_BOTTLE), 2).register(this.addon);
 		
+		//new SlimefunItem(this.materials_group, HEMP, "HEMP", RecipeType.MOB_DROP, new ItemStack[] {}).register(addon);
+		
+		new NanoCore(this.armor_group, POWER_ARMOR_CORPORATE_CORE, RecipeType.NULL, new ItemStack[] {}).register(addon);
+		new PowerArmor(this.armor_group, new SlimefunItemStack("POWER_ARMOR_SHELL", Material.NETHERITE_CHESTPLATE, "&7Power Armor Shell"), RecipeType.NULL, new ItemStack[] {}).register(addon);
 		
 		// experience generator
 		new ExperienceGenerator(this.machine_group, EXPERIENCE_GENERATOR, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
@@ -391,8 +531,37 @@ public class Registry {
 				Materials.VOID_INGOT, Materials.VOID_INGOT, Materials.VOID_INGOT
 		}).register(addon);
 		
-		// hazmat boots
-		new AdvancedHazmat(this.armor_group, ADVANCED_HAZMAT_BOOTS, RecipeType.NULL, new ItemStack[] {}, null, null).register(this.addon);
+		// hazmat set
+		new AdvancedHazmat(this.armor_group, ADVANCED_HAZMAT_HELMET, RecipeType.NULL, new ItemStack[] {
+				NANO_ALLOY,NANO_ALLOY,NANO_ALLOY,
+				null, SlimefunItems.HAZMAT_CHESTPLATE, null,
+				null,null,null,
+		}, new ProtectionType[] {
+				ProtectionType.RADIATION
+		}, null).register(this.addon);
+		new AdvancedHazmat(this.armor_group, ADVANCED_HAZMAT_CHEST, RecipeType.NULL, new ItemStack[] {
+				null,NANO_ALLOY,null,
+				NANO_ALLOY, SlimefunItems.HAZMAT_CHESTPLATE, NANO_ALLOY,
+				null,NANO_ALLOY,null,
+		}, new ProtectionType[] {
+				ProtectionType.RADIATION
+		}, null).register(this.addon);
+		new AdvancedHazmat(this.armor_group, ADVANCED_HAZMAT_LEGS, RecipeType.NULL, new ItemStack[] {
+				null,null,null,
+				NANO_ALLOY, SlimefunItems.HAZMAT_LEGGINGS, NANO_ALLOY,
+				null,null,null,
+		}, new ProtectionType[] {
+				ProtectionType.RADIATION
+		}, null).register(this.addon);
+		new AdvancedHazmat(this.armor_group, ADVANCED_HAZMAT_BOOTS, RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
+				null,null,null,
+				null, SlimefunItems.HAZMAT_BOOTS, null,
+				null,NANO_ALLOY,null,
+		}, new ProtectionType[] {
+				ProtectionType.RADIATION
+		}, null).register(this.addon);
+		
+		new TurboSwaglordLegendArmor(this.nope, new SlimefunItemStack("SWAG_MONEY_PRO_OHIO", SWAG_MONEY_PRO_OHIO), RecipeType.NULL, new ItemStack[] {}, null, null).register(this.addon);
 		
 		// test enchanted item
 		
@@ -429,6 +598,20 @@ public class Registry {
 				new CustomItemStack(SlimefunItems.REINFORCED_ALLOY_INGOT, 64), new CustomItemStack(SlimefunItems.REINFORCED_ALLOY_INGOT, 64), new CustomItemStack(SlimefunItems.REINFORCED_ALLOY_INGOT, 64)
 		}).register(addon);
 		
+    	new Drug("warpowder", this.nope, Registry.WARPOWDER,RecipeType.NULL, new ItemStack[] {},
+    			new PotionEffect[] { 
+    	    			  new PotionEffect(PotionEffectType.CONFUSION,240,5), 
+    	    			  new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 1480, 2),
+    	    			  new PotionEffect(PotionEffectType.INCREASE_DAMAGE,1480,6),
+    	    			}, 5, 2000, "feel your heart beating hundreds of times faster than normal!",
+    			new PotionEffect[] {
+    					new PotionEffect(PotionEffectType.WITHER, 999999, 2),
+    					new PotionEffect(PotionEffectType.BLINDNESS, 999999, 2),
+    					new PotionEffect(PotionEffectType.HUNGER, 999999, 2),
+    					new PotionEffect(PotionEffectType.WEAKNESS, 999999, 2),
+    					new PotionEffect(PotionEffectType.HARM, 100, 5),
+    	    }		
+    	).register(addon);
 		
 		new SlimefunItem(this.materials_group, NANO_CORE , RecipeType.ENHANCED_CRAFTING_TABLE, new ItemStack[] {
 			new CustomItemStack(NANO_PARTICLES, 64), new CustomItemStack(NANO_PARTICLES, 64), new CustomItemStack(NANO_PARTICLES, 64),
@@ -440,12 +623,15 @@ public class Registry {
 		
 		// uncommon loot box
 		AbstractLootBox UncommonLootBox = new AbstractLootBox(this.mob_drops_group, UNCOMMON_CHEST, RecipeType.MOB_DROP, new ItemStack[] {});
+		UncommonLootBox.addDrop(new CustomItemStack(SlimefunItems.BASIC_CIRCUIT_BOARD,  22), 4);
 		UncommonLootBox.addDrop(new CustomItemStack(SlimefunItems.ADVANCED_CIRCUIT_BOARD,  8), 4);
 		UncommonLootBox.addDrop(new CustomItemStack(SlimefunItems.ELECTRIC_MOTOR,  2), 4);
 		UncommonLootBox.addDrop(new CustomItemStack(SlimefunItems.ANDROID_MEMORY_CORE,  1), 4);
 		UncommonLootBox.addDrop(new CustomItemStack(SlimefunItems.BATTERY,  10), 5);
 		UncommonLootBox.addDrop(new CustomItemStack(SlimefunItems.REINFORCED_ALLOY_INGOT,  8), 3);
-		UncommonLootBox.addDrop(new CustomItemStack(common_token.getItem(), 1), 4);
+		UncommonLootBox.addDrop(new CustomItemStack(SlimefunItems.REINFORCED_ALLOY_INGOT, 4), 3);
+		UncommonLootBox.addDrop(new CustomItemStack(SlimefunItems.NUCLEAR_REACTOR, 1), 1);
+		UncommonLootBox.addDrop(new CustomItemStack(common_token.getItem(), 1),2);
 		UncommonLootBox.register(addon);
 		
 		

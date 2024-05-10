@@ -21,16 +21,39 @@ machines:
 
 spawning:
    virulean_zombie:
-      spawn_chance: 100
+      spawn_chance: 500
       blacklisted_dimensions:
          - world_nether
          - world_the_end
-  
+   wandering_sword:
+      spawn_chance: 500
+      blacklisted_dimensions:
+         - world_nether
+         - world_the_end  
 tokens:
    basic:
       name: "&7Basic Research Token"
       desc: "&7>> &4&nRight-Click&r &7to redeem this token."
       unlocks: 
+         - slimefun:basic_circuit_board
+         - slimefun:smeltery 
+         - slimefun:steel
+         - slimefun:battery
+         - slimefun:slimefun_metals
+         - slimefun:ore_crusher
+         - slimefun:alloys
+         - slimefun:compressor_and_carbon
+         - slimefun:pressure_chamber
+         - slimefun:magic_workbench
+         - slimefun:crushed_ore
+         - slimefun:nickel_and_cobalt
+         - slimefun:high_tier_advanced_furnaces
+         - slimefun:reinforced_furnace
+         - slimefun:carbonado_furnace
+         - slimefun:block_placer
+         - slimefun:enhanced_furnace
+         - slimefun:juicer
+         - slimefun:ancient_altar
          - slimefun:automatic_ignition_chamber
    advanced:
       name: "&eAdvanced Research Token"

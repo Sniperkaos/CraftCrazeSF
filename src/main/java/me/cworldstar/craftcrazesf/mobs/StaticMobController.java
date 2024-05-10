@@ -13,7 +13,6 @@ import org.bukkit.entity.LivingEntity;
 
 import io.github.bakedlibs.dough.config.Config;
 import me.cworldstar.craftcrazesf.CraftCrazeSF;
-import me.cworldstar.craftcrazesf.mobs.normal.ViruleanZombie;
 
 public class StaticMobController {
 	public static Map<String, LivingEntity> mobs = new HashMap<String, LivingEntity>();

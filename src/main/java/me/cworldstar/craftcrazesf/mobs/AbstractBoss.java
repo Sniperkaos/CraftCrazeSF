@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
 import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
@@ -14,12 +15,14 @@ import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityDropItemEvent;
@@ -64,9 +67,20 @@ public abstract class AbstractBoss implements Listener {
 		}
 	}
 	
+	
+	private List<DamageCause> blacklisted_damage_types = List.of(
+			DamageCause.DROWNING, // no drowned cheating
+			DamageCause.CRAMMING, // no cramming cheating
+			DamageCause.FALL // no fall dmg
+    );
+
+	
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onEntityDamage(EntityDamageEvent e) {
 		if(e.getEntity().getUniqueId().equals(BossEntity.getUniqueId())) {
+			if(blacklisted_damage_types.contains(e.getCause())) {
+				e.setCancelled(true);
+			}
 			this.onEntityDamagedModifier(e);
 		} 
 		
@@ -78,6 +92,9 @@ public abstract class AbstractBoss implements Listener {
 			this.onEntityDamagingModifier(e);
 		}
 	}
+	
+
+	
 	
 	@EventHandler(priority = EventPriority.LOW)
 	public void onEntityDeath(EntityDeathEvent e) {
@@ -112,6 +129,11 @@ public abstract class AbstractBoss implements Listener {
 	}
 	
 	public Optional<Entity> getTarget() {
+		
+		if(this.BossEntity instanceof Monster) {
+			return Optional.ofNullable(((Monster) BossEntity).getTarget());
+		}
+		
 		return Optional.ofNullable(this.target);
 	}
 	
@@ -142,9 +164,8 @@ public abstract class AbstractBoss implements Listener {
 		}
 		
 		Skill chosen_skill = active_skills.get(new Random().nextInt(active_skills.size()));
-		
 		if(this.chat_manager.skillHasDialog(chosen_skill.id)) {
-			Speak.AOEMessage(BossEntity, Utils.formatString( this.chat_manager.randomSkillDialog(chosen_skill.id) ), 12, Sound.BLOCK_NOTE_BLOCK_IMITATE_WITHER_SKELETON);
+			Speak.AOEMessage(BossEntity, this.chat_manager.randomSkillDialog(chosen_skill.id) , 24, Sound.BLOCK_NOTE_BLOCK_IMITATE_WITHER_SKELETON);
 		}		
 		chosen_skill.use();
 	}
@@ -154,6 +175,8 @@ public abstract class AbstractBoss implements Listener {
 		this.applyEntityEdits(BossEntity);
 		
 		this.onRegister();
+		
+		this.registerDialogs();
 		
 		StaticMobController.mobs.put(boss_identifier.toString(), BossEntity);
 		
@@ -209,6 +232,9 @@ public abstract class AbstractBoss implements Listener {
 					}
 				}
 				
+				if(nearby_players.isEmpty()) {
+					return;
+				}
 				
 				for(Player p : nearby_players) {
 					if(!nearby_entities.contains(p)) {

@@ -2,10 +2,12 @@ package me.cworldstar.craftcrazesf.api.handlers;
 
 import io.github.thebusybiscuit.slimefun4.api.items.ItemHandler;
 
-public class ItemTicker implements ItemHandler  {
+public interface ItemTicker extends ItemHandler  {
 
+	void tick();
+	
 	@Override
-	public Class<? extends ItemHandler> getIdentifier() {
+	default Class<? extends ItemHandler> getIdentifier() {
 		// TODO Auto-generated method stub
 		return ItemTicker.class;
 	}

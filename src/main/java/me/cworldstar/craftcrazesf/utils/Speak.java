@@ -28,7 +28,7 @@ public class Speak {
     	}
     }
     public Speak(Entity Origin,String text,int Surrounding, Sound to_play) {
-    	for(Entity e : Origin.getNearbyEntities(Surrounding, 100, Surrounding)) {
+    	for(Entity e : Origin.getNearbyEntities(Surrounding, Utils.clamp(12, 100, Surrounding), Surrounding)) {
     		Origin.getWorld().playSound(Origin.getLocation(), to_play, 0.6F, 0.2F);
     		e.sendMessage(ChatColor.translateAlternateColorCodes('&', text));
     	}

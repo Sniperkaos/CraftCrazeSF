@@ -1,7 +1,5 @@
 package me.cworldstar.craftcrazesf.items.armors;
 
-import java.util.Arrays;
-
 import javax.annotation.Nullable;
 
 import org.bukkit.inventory.ItemStack;
@@ -13,10 +11,8 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.attributes.ProtectionType;
 import io.github.thebusybiscuit.slimefun4.core.attributes.ProtectiveArmor;
-import me.cworldstar.craftcrazesf.api.handlers.PlayerEquipArmor;
 import me.cworldstar.craftcrazesf.items.armors.set.Set;
 import me.cworldstar.craftcrazesf.listeners.ArmorEquipEvent;
-import me.cworldstar.craftcrazesf.utils.AdvScheduler;
 
 /**
  * AbstractArmor class for slimefun.
@@ -50,8 +46,6 @@ public abstract class AbstractArmor extends SlimefunItem implements ProtectiveAr
 		
 		this.effects = effects;
 		this.types = types;
-		
-
 		
 	}
 	

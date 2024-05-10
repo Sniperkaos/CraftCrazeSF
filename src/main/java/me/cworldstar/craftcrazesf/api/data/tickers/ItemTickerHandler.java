@@ -18,6 +18,6 @@ public class ItemTickerHandler {
 				}
 			}
 			
-		}.runTaskTimer(CraftCrazeSF.instance(), 1, 0);
+		}.runTaskTimer(CraftCrazeSF.instance(), 0, 1);
 	}
 }

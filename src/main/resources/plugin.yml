@@ -25,6 +25,6 @@ commands:
       description: main command
       usage: /<command>
 
-depend: [Slimefun, InfinityExpansion]
+depend: [Slimefun, InfinityExpansion, Vault]
 
 softdepend: [WorldEdit, PlaceholderAPI, AdvancedEnchantments]

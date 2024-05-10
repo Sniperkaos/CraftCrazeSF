@@ -47,7 +47,7 @@ public class Skill {
 	}
 	
 	public void setId(String id) {
-		if(this.Locked) {
+		if(this.Locked == true) {
 			return;
 		}
 		this.id = id;

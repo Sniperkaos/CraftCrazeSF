@@ -6,8 +6,11 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import org.bukkit.Color;
+import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
+import org.bukkit.Particle.DustOptions;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -21,6 +24,7 @@ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.attributes.ProtectionType;
 import me.cworldstar.craftcrazesf.CraftCrazeSF;
 import me.cworldstar.craftcrazesf.api.handlers.PlayerEquipArmor;
+import me.cworldstar.craftcrazesf.api.handlers.PlayerUnequipArmor;
 import me.cworldstar.craftcrazesf.items.armors.set.Set;
 import me.cworldstar.craftcrazesf.listeners.ArmorEquipEvent;
 import me.cworldstar.craftcrazesf.utils.AdvScheduler;
@@ -56,6 +60,19 @@ public class AdvancedHazmat extends AbstractArmor {
 		
 		addToSet(Set.Sets.ADVANCED_HAZMAT.getSet());
 		
+		addItemHandler(new PlayerUnequipArmor() {
+
+			@Override
+			public void onPlayerUnequipArmor(ArmorEquipEvent e) {
+				if(e.getAllArmorPieces().length == Set.Sets.ADVANCED_HAZMAT.getSet().getArmorParts().size()) {
+					e.getPlayer().sendMessage(Utils.formatString("&7> Armor set unequipped! <"));
+				}
+
+				AdvScheduler.cancel(e.getPlayer().getName()+"-Armor");
+			}
+			
+		});
+		
 		addItemHandler(new PlayerEquipArmor() {
 			@Override
 			public void onPlayerEquipArmor(ArmorEquipEvent e) {
@@ -77,7 +94,9 @@ public class AdvancedHazmat extends AbstractArmor {
 	@Override
 	public ProtectionType[] getProtectionTypes() {
 		// TODO Auto-generated method stub
-		return this.types;
+		return new ProtectionType[] {
+				ProtectionType.RADIATION
+		};
 	}
 
 	@Override
@@ -95,15 +114,16 @@ public class AdvancedHazmat extends AbstractArmor {
 	@Override
 	void equip(ArmorEquipEvent e) {
 		e.getPlayer().sendMessage(Utils.formatString("&7> Armor set equipped! <"));
-		AdvScheduler.schedule(e.getPlayer()+"-Armor", new BukkitRunnable() {
+		AdvScheduler.schedule(e.getPlayer().getName()+"-Armor", new BukkitRunnable() {
 
 			@Override
 			public void run() {
-				ParticleUtils.drawCube(Particle.REDSTONE, e.getPlayer().getLocation().add(-1,-1,-1),e.getPlayer().getLocation().add(1,1,1) , 0.25D);
+				Location L = e.getPlayer().getLocation().add(0,0.5,0);
+				ParticleUtils.drawCube(new DustOptions(Color.FUCHSIA, 1), L.add(-1,-1,-1),L.add(1,1,1) , 0.25D);
 				AdvancedHazmat.ApplyPotionEffects(e.getPlayer());
 			}
 			
-		}, RunType.LOOP, 20);
+		}, RunType.LOOP, 2);
 	}
 
 }

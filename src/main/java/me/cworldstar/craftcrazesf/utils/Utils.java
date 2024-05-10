@@ -46,14 +46,14 @@ public class Utils {
 		return ChatColor.translateAlternateColorCodes('&', string);
 	}
 	
-	public static Integer clamp(int a, int b, int number) {
+	public static Integer clamp(int max, int min, int number) {
 		
-		if(number > a) {
-			number = a;
+		if(number > max) {
+			number = max;
 		} 
 		
-		if (number < b) {
-			number = b;
+		if (number < min) {
+			number = min;
 		}
 	
 		return number;

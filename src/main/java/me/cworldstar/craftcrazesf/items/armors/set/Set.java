@@ -9,7 +9,10 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import me.cworldstar.craftcrazesf.CraftCrazeSF;
 
 /**
@@ -25,8 +28,16 @@ public class Set {
 	
 	public static Map<String, Set> sets = new HashMap<String, Set>();
 	
+	/**
+	 * When making a new set, add the set to the Sets enum.
+	 * 
+	 * @author cworldstar
+	 *
+	 */
+	
 	public enum Sets {
-		ADVANCED_HAZMAT(new Set("ADVANCED_HAZMAT", new ItemStack[] {}));
+		ADVANCED_HAZMAT(new Set("ADVANCED_HAZMAT", new ItemStack[] {})),
+		TURBO_SWAGLORD_LEGEND_ARMOR(new Set("TURBO_SWAGLORD_LEGEND_ARMOR_SET", new ItemStack[] {}));
 		
 		private final Set set;
 		
@@ -52,22 +63,34 @@ public class Set {
 	public boolean ValidateSet(List<ItemStack> items) {
 		int parts = 0;
 		items.removeAll(Collections.singleton(null));
-		CraftCrazeSF.log(Level.INFO, "validating set");
 		for(ItemStack item : armor_contents) {
 			for(ItemStack to_compare : items) {
 				if(to_compare == null) {
 					continue;
 				}
-				CraftCrazeSF.log(Level.INFO, "comparing set: " + item.toString() + " | AGAINST |  " + to_compare.toString());
-				if(item.isSimilar(to_compare)) {
-					CraftCrazeSF.log(Level.INFO, "parts: " + Integer.toString(parts) + " : " + items.size());
-					CraftCrazeSF.log(Level.INFO, "yes");
-					parts += 1;
+				if(SlimefunItem.getById(to_compare.getItemMeta().getPersistentDataContainer().get(CraftCrazeSF.createKey("id"), PersistentDataType.STRING)) != null) {
+					//-- clone item
+					ItemStack comparable_item = SlimefunItem.getById(to_compare.getItemMeta().getPersistentDataContainer().get(CraftCrazeSF.createKey("id"), PersistentDataType.STRING)).getItem();
+					if(comparable_item.isSimilar(item)) {
+
+						parts += 1;
+						continue;
+					}
+				} else {
+					if(item.isSimilar(to_compare)) {
+						parts += 1;
+						continue;
+					}
 				}
+
+
 			}
 		}
-		CraftCrazeSF.log(Level.INFO, "validated? " + Boolean.toString(parts >= armor_contents.size()));
 		return (parts >= armor_contents.size());
+	}
+	
+	public List<ItemStack> getArmorParts() {
+		return this.armor_contents;
 	}
 	
 	public void AddArmorPart(ItemStack i) {

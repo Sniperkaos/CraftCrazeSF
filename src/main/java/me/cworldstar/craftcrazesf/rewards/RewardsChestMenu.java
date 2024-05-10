@@ -1,12 +1,11 @@
 package me.cworldstar.craftcrazesf.rewards;
 
-import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
+import me.cworldstar.craftcrazesf.api.ui.AbstractMenu;
 
-@SuppressWarnings("deprecation")
-public class RewardsChestMenu extends ChestMenu {
+public class RewardsChestMenu extends AbstractMenu {
 
 	public RewardsChestMenu(String title) {
-		super(title);
+		super(27);
 	}
 
 }

@@ -5,6 +5,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import org.bukkit.Sound;
+
+import io.github.thebusybiscuit.slimefun4.libraries.commons.lang.math.RandomUtils;
+import me.cworldstar.craftcrazesf.utils.Utils;
+
 public class EntityDialog {
 	
 	public enum Personality {
@@ -20,14 +25,14 @@ public class EntityDialog {
 	private Map<String, ArrayList<String>> SkillDialogs = new HashMap<String, ArrayList<String>>();
 	private String EntityName;
 	private Personality EntityPersonality;
-
+	private Sound entity_sound = Sound.AMBIENT_BASALT_DELTAS_ADDITIONS;
+	
 	public String randomDialog() {
-		// TODO: Create "Personalities" with different dialog.
-		return EntityName.concat(this.Dialog.get(this.EntityPersonality).get(randomizer.nextInt(this.Dialog.get(this.EntityPersonality).size())));
+		return EntityName + ": &f" + this.Dialog.get(this.EntityPersonality).get(RandomUtils.nextInt(this.Dialog.get(this.EntityPersonality).size()));
 	}
 	
 	public String randomSkillDialog(String skillId) {
-		return this.SkillDialogs.get(skillId).get(randomizer.nextInt(this.SkillDialogs.get(skillId).size()));
+		return EntityName + ": &f" + this.SkillDialogs.get(skillId).get(RandomUtils.nextInt(this.SkillDialogs.get(skillId).size()));
 	}
 	
 	@SuppressWarnings("static-access")
@@ -76,30 +81,56 @@ public class EntityDialog {
 
 	public boolean skillHasDialog(String skillId) {
 		
-		return (this.SkillDialogs.get(skillId) != null && !this.SkillDialogs.get(skillId).isEmpty());
+		return (this.SkillDialogs.get(skillId).size() > 0);
 	}
 	
 	public void registerAllDialogs(Personality P, ArrayList<String> dialogs) {
-		// TODO Auto-generated method stub
+
 		for(String dialog: dialogs) {
 			this.Dialog.get(P).add(dialog);
 		}
 	}
 
 	public void registerAllDialogs(Personality personality, String[] dialogList) {
-		// TODO Auto-generated method stub
+
 		for(String dialog: dialogList) {
 			this.Dialog.get(personality).add(dialog);
 		}
 	}
 
 	public void registerSkillDialogs(String skillId, String[] strings) {
-		// TODO Auto-generated method stub
 		
 		this.SkillDialogs.putIfAbsent(skillId, new ArrayList<String>());
 		
+		ArrayList<String> new_strings = new ArrayList<String>();
+		
 		for( String dialog : strings) {
-			this.SkillDialogs.get(skillId).add(dialog);
+			new_strings.add(Utils.formatString(dialog));
 		}
+		
+		this.SkillDialogs.put(skillId, new_strings);
 	}
+
+	public void registerSkillDialogs(String skillId, ArrayList<String> strings) {
+		this.SkillDialogs.putIfAbsent(skillId, new ArrayList<String>());
+		
+		ArrayList<String> new_strings = new ArrayList<String>();
+		
+		for( String dialog : strings) {
+			new_strings.add(Utils.formatString(dialog));
+		}
+		
+		this.SkillDialogs.put(skillId, new_strings);
+
+	}
+	
+	public void setDialogSound(Sound sound) {
+		this.entity_sound = sound;
+	}
+
+	public Sound getEntitySound() {
+		return entity_sound;
+	}
+
+
 }

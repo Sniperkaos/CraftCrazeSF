@@ -15,7 +15,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPluginLoader;
@@ -24,10 +23,14 @@ import io.github.mooy1.infinitylib.commands.SubCommand;
 import io.github.mooy1.infinitylib.core.AbstractAddon;
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.config.Config;
+import me.cworldstar.craftcrazesf.api.DamageManager;
 import me.cworldstar.craftcrazesf.commands.ListResearch;
+import me.cworldstar.craftcrazesf.commands.Reload;
 import me.cworldstar.craftcrazesf.commands.Spawn;
+import me.cworldstar.craftcrazesf.commands.TestUI;
 import me.cworldstar.craftcrazesf.commands.Token;
 import me.cworldstar.craftcrazesf.listeners.ArmorListener;
+import me.cworldstar.craftcrazesf.listeners.DurabilityModifier;
 import me.cworldstar.craftcrazesf.listeners.PlayerJoinEventListener;
 import me.cworldstar.craftcrazesf.listeners.SlimefunItemArmorListener;
 import me.cworldstar.craftcrazesf.listeners.SpawnListener;
@@ -37,8 +40,10 @@ import me.cworldstar.craftcrazesf.listeners.pets.IronGolemPetListener;
 import me.cworldstar.craftcrazesf.listeners.pets.SamuraiPetListener;
 import me.cworldstar.craftcrazesf.machines.compact.AbstractCompactMachine;
 import me.cworldstar.craftcrazesf.mobs.StaticMobController;
+import me.cworldstar.craftcrazesf.nightmarket.Nightmarket;
 import me.cworldstar.craftcrazesf.utils.LoreFormatter;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
+import net.milkbowl.vault.economy.Economy;
 
 public class CraftCrazeSF extends AbstractAddon implements SlimefunAddon {
 
@@ -65,8 +70,18 @@ public class CraftCrazeSF extends AbstractAddon implements SlimefunAddon {
 	public static Map<String, Block> compactMachineBlocks = new HashMap<String, Block>();
 	public static Map<String, Boolean> compactMachineStatus = new HashMap<String, Boolean>();
 	public static Map<String, BlockMenu> compactMachineMenus = new HashMap<String, BlockMenu>();
+	public static DamageManager _damage_manager;
+	private SpawnListener listener;
+	public static Nightmarket nightmarket;
+	public static Economy econ;
 	
-
+	public static Economy getEconomy() {
+		return econ;
+	}
+	
+	public static Nightmarket getNightmarket() {
+		return nightmarket;
+	}
 	
 	public static File data_folder;
 	
@@ -99,8 +114,16 @@ public class CraftCrazeSF extends AbstractAddon implements SlimefunAddon {
 		return compactMachineMenus.get(compactMachineInventoryIds.get(clickedInventory));
 	}
 	
+	public static DamageManager getDamageManager() {
+		return CraftCrazeSF._damage_manager;
+	}
+	
 	public static CraftCrazeSF getMainPlugin() {
 		return CraftCrazeSF.getPlugin(CraftCrazeSF.class);
+	}
+	
+	public SpawnListener getSpawnListener() {
+		return this.listener;
 	}
 	
 	public static void warn(String s) {
@@ -138,14 +161,22 @@ public class CraftCrazeSF extends AbstractAddon implements SlimefunAddon {
         ExperiencePetListener ExperiencePetListener = new ExperiencePetListener();
         SamuraiPetListener SamuraiPetListener = new SamuraiPetListener();
         SpawnListener SpawnListener = new SpawnListener();
+        this.listener = SpawnListener;
         PlayerJoinEventListener PlayerFirstJoinListener = new PlayerJoinEventListener();
         ArmorListener ArmorListener = new ArmorListener(new ArrayList<String>());
+        DurabilityModifier DurabilityModifier = new DurabilityModifier();
         SlimefunItemArmorListener SFArmorListener = new SlimefunItemArmorListener();
+        _damage_manager = new DamageManager();
         logger.log(Level.INFO, "Event listeners loaded!");
         
+        logger.log(Level.INFO, "Loading nightmarket...");
+        CraftCrazeSF.nightmarket = new Nightmarket();
+        logger.log(Level.INFO, "Nightmarket loaded!");
         
         logger.log(Level.INFO, "Creating commands.");
         //commands
+        
+        
         SubCommand list_research = new ListResearch(this);
         this.getAddonCommand().addSub(list_research);
         
@@ -155,9 +186,28 @@ public class CraftCrazeSF extends AbstractAddon implements SlimefunAddon {
         SubCommand give_token = new Token("token", "gives a player a token", "ccsf.token");
         this.getAddonCommand().addSub(give_token);
         
+        SubCommand reload = new Reload("reload", "reloads the config", "ccsf.reload");
+        this.getAddonCommand().addSub(reload);
+        
+        SubCommand nightmarket = new me.cworldstar.craftcrazesf.commands.Nightmarket("nightmarket", "nightmarket related stuff", "ccsf.nightmarket");
+        this.getAddonCommand().addSub(nightmarket);
+        
+        SubCommand TestUI = new TestUI("testui", "test", "ccsf.debug");
+        this.getAddonCommand().addSub(TestUI);
+        
+        
+        //-- create the dark matter network
+        
         logger.log(Level.INFO, "Commands done.");
      
         data_folder = this.getDataFolder();
+     
+        logger.log(Level.INFO, "Hooking vault api...");
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            logger.log(Level.SEVERE, "Vault not installed! The nightmarket will not work!");
+        } else {
+        	CraftCrazeSF.econ = getServer().getServicesManager().getRegistration(Economy.class).getProvider();
+        }
         
         if(!(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") == null)) {
         	CraftCrazeSF.PlaceholderAPI_Loaded = true;
@@ -180,6 +230,10 @@ public class CraftCrazeSF extends AbstractAddon implements SlimefunAddon {
 		
 		StaticMobController.save();
 		
+	}
+
+	public static void runSync(Runnable runnable) {
+		Bukkit.getServer().getScheduler().runTaskLater(CraftCrazeSF.getMainPlugin(), runnable, 0L);
 	}
 
 

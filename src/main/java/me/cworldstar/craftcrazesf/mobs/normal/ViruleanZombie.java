@@ -239,6 +239,9 @@ public class ViruleanZombie extends AbstractBoss {
 	protected void death(EntityDeathEvent e) {
 		e.setDroppedExp(1000);
 		e.getDrops().add(Registry.UNCOMMON_CHEST.clone());
+		if(Math.random() * 10 >= 9) {
+			//-- 10% to drop this item
+		}
 	}
 
 	@Override
